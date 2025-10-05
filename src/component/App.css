@@ -12,6 +12,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: rgb(250, 248, 248);
 }
 
 .material-symbols-outlined {
@@ -28,15 +29,10 @@
 
 .nav-bar li{
   display: flex;
-  border-bottom: 1px solid gray;
-  border-right: 1px solid gray;
+  border-bottom: 1px solid rgb(173, 172, 172);
   padding: 12px;
   padding-left: 24px;
   padding-right: 24px;
-}
-
-.nav-bar li:last-child {
-  border-bottom: none;
 }
 
 .nav-bar ul {

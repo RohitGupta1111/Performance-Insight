@@ -1,4 +1,4 @@
-import { onCLS, onFCP, onLCP } from "web-vitals";
+import { onCLS, onFCP, onLCP, onINP, onTTFB } from "web-vitals";
 
 window._getWebVitals = () => {
     const sendWebVitals = (metric) => {
@@ -8,4 +8,6 @@ window._getWebVitals = () => {
     onCLS(sendWebVitals);
     onFCP(sendWebVitals);
     onLCP(sendWebVitals);
+    onINP(sendWebVitals);
+    onTTFB(sendWebVitals);
 }

@@ -42,3 +42,11 @@ export const VARIANT_LEVELS = {
     MAX: 2000
    }
 }
+
+export const DEFAULT_VITALS_DATA = {
+    LCP: -1,
+    CLS: -1,
+    FCP: -1,
+    TTFB: -1,
+    INP: -1
+}

@@ -7,8 +7,11 @@ function LinearIndicator ({value, variant}) {
     const [indicatorPosition, setIndicatorPosition] = useState(0);
     const [isAboveMax, setAboveMax] = useState(false);
 
-    const getBarPosition = (value, good, poor, max) => {
+    const getBarPosition = () => {
             let levelMin, levelMax, levelIndex, levelIndicator;
+            const good = VARIANT_LEVELS[variant].GOOD;
+            const poor = VARIANT_LEVELS[variant].POOR;
+            const max = VARIANT_LEVELS[variant].MAX;
 
             if (value <= good) {
                 levelIndex = 1;        // Good
@@ -38,32 +41,27 @@ function LinearIndicator ({value, variant}) {
         }
 
     useEffect(() => {
-        if(variant) {
-            const {level, barPosition} = getBarPosition(
-                value,
-                VARIANT_LEVELS[variant].GOOD,
-                VARIANT_LEVELS[variant].POOR,
-                VARIANT_LEVELS[variant].MAX
-            );
+        if(variant && value >= 0) {
+            const {level, barPosition} = getBarPosition();
             setIndicatorLevel(level);
             setAboveMax(barPosition > 300);
             console.log(barPosition);
             setIndicatorPosition(barPosition > 300 ? 300 : barPosition);
         }
         
-    },[]);
+    },[value]);
 
 
     return (
         <div className="bar-component-container">
-            <div>{indicatorLevel}{(isAboveMax ? "+" : "" )}</div>
-            <div>{value}</div>
+            <div className="variant-label">{variant}</div>
             <div className="indicator" style={{left: `${indicatorPosition}px`}}></div>
             <div className="bar-container">
                 <div className="bar good"></div>
                 <div className="bar needs-improvement"></div>
                 <div className="bar poor"></div>
             </div>
+             <div>{indicatorLevel}{(isAboveMax ? "+ " : "  " )}{`(${value})`}</div>
         </div>
     );
 }

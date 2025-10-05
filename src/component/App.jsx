@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import LinearIndicator from './LinearIndicator'
-import { NAV_OPTIONS } from '../enums';
+import { DEFAULT_VITALS_DATA, NAV_OPTIONS } from '../enums';
 import DashboardComponent from './DashboardComponent';
 
 function App() {
   const [selectedNavOption, setsSelectedNavOption] = useState(NAV_OPTIONS.MAIN);
-  const [webVitalsData,setWebVitalsData] = useState({});
+  const [webVitalsData,setWebVitalsData] = useState(DEFAULT_VITALS_DATA);
 
   useEffect(() => {
     chrome.storage.local.get(null, data => {

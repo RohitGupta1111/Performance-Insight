@@ -1,0 +1,7 @@
+.dashboard-component-container ul {
+    list-style-type: none;
+}
+
+.dashboard-component-container li {
+    margin-top: 24px;
+}
