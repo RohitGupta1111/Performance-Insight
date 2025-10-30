@@ -12,7 +12,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: rgb(250, 248, 248);
+  background-color: #1E293B;
+  color: #FFFFFF;
+}
+
+.nav-bar li.active {
+  background-color: #F8FAFC;
+  color: black;
+  font-weight: bold;
+  border-bottom: none;
 }
 
 .material-symbols-outlined {
@@ -29,7 +37,7 @@
 
 .nav-bar li{
   display: flex;
-  border-bottom: 1px solid rgb(173, 172, 172);
+  border-bottom: 1px solid #334155;
   padding: 12px;
   padding-left: 24px;
   padding-right: 24px;
@@ -41,6 +49,20 @@
   margin: 0px;
 }
 
-.main-container {
-  padding: 36px;
+.bold-text {
+  font-weight: bold;
 }
+
+.indicator {
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;   /* half of the triangle base */
+  border-right: 8px solid transparent;  /* half of the triangle base */
+  border-top: 16px solid #3498db;
+  left: 0px;
+  position: relative;
+}
+
+/* .main-container {
+  padding: 16px 64px;
+} */

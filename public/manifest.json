@@ -10,7 +10,14 @@
     "service_worker": "service-worker.js",
     "type": "module"
   },
-  "permissions" : ["scripting","activeTab","storage"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["web-vital-bundle-script.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "permissions" : ["scripting","activeTab","storage","debugger"],
   "host_permissions": [
     "http://*/*",
     "https://*/*"

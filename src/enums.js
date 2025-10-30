@@ -11,7 +11,8 @@ export const NAV_OPTIONS = {
     INP: "INP",
     CLS: "CLS",
     TTFB: "TTFB",
-    FCP: "FCP"
+    FCP: "FCP",
+    THROTTLE: "Throttle"
 
 }
 
@@ -44,9 +45,9 @@ export const VARIANT_LEVELS = {
 }
 
 export const DEFAULT_VITALS_DATA = {
-    LCP: -1,
-    CLS: -1,
-    FCP: -1,
-    TTFB: -1,
-    INP: -1
+    LCP: { value: -1 },
+    INP: { value: -1 },
+    CLS: { value: -1 },
+    TTFB: { value: -1 },
+    FCP: { value: -1 },
 }

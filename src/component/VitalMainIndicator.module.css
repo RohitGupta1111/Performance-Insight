@@ -1,0 +1,63 @@
+.vital-indicator-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 48px;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+.good-section {
+    background: green;
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+    height: 48px;
+    width: 150px;
+    display: flex;
+}
+
+.need-improvement-section {
+    background: orange;
+    height: 48px;
+    width: 150px;
+    display: flex;
+
+}
+
+.poor-section {
+    background: red;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+    height: 48px;
+    width:150px;
+    display: flex;
+}
+
+.good-text {
+    margin: auto;
+    color: black;
+    font-weight: bold;
+}
+
+.need-improvement-text {
+    margin: auto;
+    color: black;
+    font-weight: bold;
+}
+
+.poor-text {
+    margin: auto;
+    color: black;
+    font-weight: bold;
+}
+
+.component-indicator {
+    /* left: 19px; */
+    position: relative;
+    border-left: 2px solid #3498db;
+    height: 14px;
+}
+
+.vital-main-indicator {
+    margin: 8px;
+}

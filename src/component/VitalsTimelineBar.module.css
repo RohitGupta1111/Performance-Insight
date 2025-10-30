@@ -1,0 +1,44 @@
+.timelineContainer {
+  width: 450px;
+  margin-top: 12px;
+  font-size: 12px;
+}
+
+.timelineBar {
+  display: flex;
+  height: 16px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #e0e0e0;
+  position: relative;
+}
+
+.ttfb {
+  background-color: #4caf50; /* green */
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fcp {
+  background-color: #ff9800; /* orange */
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lcp {
+  background-color: #f44336; /* red */
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timelineLabels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+}

@@ -1,0 +1,27 @@
+.dashboard-component-container{
+    padding: 16px 64px;
+}
+
+.dashboard-component-container ul {
+    list-style-type: none;
+    padding: 0px;
+}
+
+.dashboard-component-container li {
+    margin-top: 12px;
+    border-bottom: 1px solid lightgray;
+    padding-bottom: 16px;
+}
+
+.dashboard-component-container li:hover {
+    cursor: pointer;
+}
+
+.dashboard-component-container li:nth-child(1) {
+    margin-top: 0px;
+}
+
+.dashboard-component-container li:last-child {
+    border-bottom: none;
+    padding-bottom: 0px;
+}

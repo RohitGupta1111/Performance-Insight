@@ -7,5 +7,10 @@ export default defineConfig(({mode}) => ({
   build: {
     minify: mode === "production",
     sourcemap: true
+  },
+  css: {
+    modules: {
+      localsConvention: 'camelCase'
+    }
   }
 }))
