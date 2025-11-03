@@ -1,44 +1,137 @@
-.timelineContainer {
-  width: 450px;
-  margin-top: 12px;
-  font-size: 12px;
+.container {
+  font-family: system-ui, sans-serif;
+  color: #222;
+  border-radius: 12px;
+  padding: 16px;
+  width: 420px;
+  display: inline-block;
 }
 
-.timelineBar {
-  display: flex;
-  height: 16px;
-  border-radius: 8px;
-  overflow: hidden;
-  background: #e0e0e0;
+.title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.timeline {
   position: relative;
+  height: 40px;
+  margin: 16px 0;
+  top: 20px;
 }
 
-.ttfb {
-  background-color: #4caf50; /* green */
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.track {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: #e0e0e0;
+  transform: translateY(-50%);
+  border-radius: 2px;
 }
 
-.fcp {
-  background-color: #ff9800; /* orange */
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.segment {
+  position: absolute;
+  top: 50%;
+  height: 6px;
+  transform: translateY(-50%);
+  border-radius: 2px;
 }
 
-.lcp {
-  background-color: #f44336; /* red */
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.segment.blue {
+  background: #3b82f6;
 }
 
-.timelineLabels {
+.segment.yellow {
+  background: #facc15;
+}
+
+.segment.green {
+  background: #22c55e;
+}
+
+.marker {
+  position: absolute;
+  top: 50%;
+  width: 2px;
+  height: 24px;
+  transform: translate(-50%, -50%);
+}
+
+.marker.blue {
+  background: #3b82f6;
+}
+
+.marker.yellow {
+  background: #facc15;
+}
+
+.marker.green {
+  background: #22c55e;
+}
+
+.label {
+  position: absolute;
+  top: -25px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+.down-label {
+  position: absolute;
+  top: 25px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+/* 
+.footer {
   display: flex;
   justify-content: space-between;
-  margin-top: 4px;
+  font-size: 12px;
+  color: #666;
+  margin-top: 8px;
+} */
+
+.legend {
+  display: flex;
+  gap: 16px;
+  margin-top: 40px;
+  font-size: 13px;
+}
+
+.dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+
+.dot.blue {
+  background: #3b82f6;
+}
+
+.dot.yellow {
+  background: #facc15;
+}
+
+.dot.green {
+  background: #22c55e;
+}
+
+.label.blue {
+  color: #3b82f6;
+}
+
+.down-label.yellow {
+  color: #facc15;
+}
+
+.label.green {
+  color: #22c55e;
 }

@@ -46,29 +46,31 @@ const CLSComponent = () => {
     <div className={styles.inpContainer}>
         <VitalHeadingContainer vitalType="CLS" value={webVitalsData["CLS"].value} description={DESCRIPTION_TEXT.CLS} />
         <VitalMainIndicator good={0.1} poor={0.25} value={webVitalsData["CLS"].value} variant="CLS"/>
-        <p className={styles.sectionTopic}>Top CLS Entries</p>
-        <p className={styles.sectionDescription}>Click on the entry to visualize the layout shift in page.</p>
-        <div className={styles.clsTopicContainer}>
-            <div className={`${styles.clsNodeSelectorText} bold-text`}>Node Selector</div>
-            <div className={`${styles.clsStartTimeText} bold-text`}>Start Time</div>
-            <div className={`${styles.clsValueText} bold-text`}>Value</div>
+        {
+          webVitalsData["CLS"].value >=0 ?
+        <>
+          <p className={styles.sectionTopic}>Top CLS Entries</p>
+          <p className={styles.sectionDescription}>Click on the entry to visualize the layout shift in page.</p>
+          <div className={styles.clsTopicContainer}>
+              <div className={`${styles.clsNodeSelectorText} bold-text`}>Node Selector</div>
+              <div className={`${styles.clsStartTimeText} bold-text`}>Start Time</div>
+              <div className={`${styles.clsValueText} bold-text`}>Value</div>
+            </div>
+          <div className={styles.clsTopContainer}>
+              {
+
+                  clsTopEntriesData.map((entry) => {
+                      return (
+                          <div className={styles.clsRowContainer} onClick={() => highlightCLSRect(entry.previousRect, entry.currentRect)}>
+                              <div className={styles.clsNodeSelectorText}>{entry.nodeSelector}</div>
+                              <div className={styles.clsStartTimeText}>{entry.startTime.toFixed(3)}</div>
+                              <div className={styles.clsValueText}>{entry.value.toFixed(3)}</div>
+                          </div>
+                      )
+                  })
+              }
           </div>
-        <div className={styles.clsTopContainer}>
-            {
-
-                clsTopEntriesData.map((entry) => {
-                    return (
-                        <div className={styles.clsRowContainer} onClick={() => highlightCLSRect(entry.previousRect, entry.currentRect)}>
-                            <div className={styles.clsNodeSelectorText}>{entry.nodeSelector}</div>
-                            <div className={styles.clsStartTimeText}>{entry.startTime.toFixed(3)}</div>
-                            <div className={styles.clsValueText}>{entry.value.toFixed(3)}</div>
-                        </div>
-                    )
-                })
-            }
-        </div>
-        
-
+        </>: null }
     </div>
   )
 }

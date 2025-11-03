@@ -1,50 +1,87 @@
-import React, { useContext, useMemo } from "react";
-import WebVitalsContext from "../context/WebVitalsContext";
+import React, { useContext } from "react";
 import styles from "./VitalsTimelineBar.module.css";
+import WebVitalsContext from "../context/WebVitalsContext";
+import { formatVitalValue } from "../utils";
 
-const VitalsTimelineBar = () => {
+function VitalsTimelineBar() {
+
   const { webVitalsData } = useContext(WebVitalsContext);
 
-  const ttfb = webVitalsData?.TTFB?.value || 0;
-  const fcp = webVitalsData?.FCP?.value || 0;
-  const lcp = webVitalsData?.LCP?.value || 0;
+  // Example metric times (in ms)
+  const metrics = {
+    navigationStart: 0,
+    ttfb: webVitalsData.TTFB.value,
+    fcp: webVitalsData.FCP.value,
+    lcp: webVitalsData.LCP.value,
+  };
 
-  // Normalize widths based on LCP
-  const total = Math.max(lcp, fcp, ttfb);
-  const pct = (val) => ((val / total) * 100).toFixed(2);
+  const total = metrics.lcp + 500;
+  const scale = (value) => `${(value / total) * 100}%`;
 
   return (
-    <div className={styles.timelineContainer}>
-      <div className={styles.timelineBar}>
+    <div className={styles.container}>
+      <h2 className={styles.title}>Page Load Timeline</h2>
+
+      <div className={styles.timeline}>
+        {/* Base line */}
+        <div className={styles.track}></div>
+
+        {/* Segments */}
         <div
-          className={styles.ttfb}
-          style={{ width: `${pct(ttfb)}%` }}
-          title={`TTFB: ${ttfb.toFixed(0)}ms`}
+          className={`${styles.segment} ${styles.blue}`}
+          style={{ 
+            left: scale(metrics.ttfb),
+            width: `calc(${scale(metrics.fcp - metrics.ttfb)})`,
+          }}
+        />
+        <div
+          className={`${styles.segment} ${styles.yellow}`}
+          style={{
+            left: scale(metrics.fcp),
+            width: `calc(${scale(metrics.lcp - metrics.fcp)})`,
+          }}
+        />
+        <div
+          className={`${styles.segment} ${styles.green}`}
+          style={{
+            left: scale(metrics.lcp),
+            width: `calc(${scale(total - metrics.lcp)})`,
+          }}
+        />
+
+        {/* Markers */}
+        <div
+          className={`${styles.marker} ${styles.blue}`}
+          style={{ left: scale(metrics.ttfb) }}
         >
-          <span>TTFB</span>
+          <span className={styles.label}>TTFB</span>
         </div>
         <div
-          className={styles.fcp}
-          style={{ width: `${pct(fcp - ttfb)}%` }}
-          title={`FCP: ${fcp.toFixed(0)}ms`}
+          className={`${styles.marker} ${styles.yellow}`}
+          style={{ left: scale(metrics.fcp) }}
         >
-          <span>FCP</span>
+          <span className={styles.downLabel}>FCP</span>
         </div>
         <div
-          className={styles.lcp}
-          style={{ width: `${pct(lcp - fcp)}%` }}
-          title={`LCP: ${lcp.toFixed(0)}ms`}
+          className={`${styles.marker} ${styles.green}`}
+          style={{ left: scale(metrics.lcp) }}
         >
-          <span>LCP</span>
+          <span className={styles.label}>LCP</span>
         </div>
       </div>
-      <div className={styles.timelineLabels}>
-        <span>{ttfb.toFixed(0)} ms</span>
-        <span>{fcp.toFixed(0)} ms</span>
-        <span>{lcp.toFixed(0)} ms</span>
+{/* 
+      <div className={styles.footer}>
+        <span className="bold-text">0</span>
+        <span className="bold-text">{formatVitalValue(total)}</span>
+      </div> */}
+
+      <div className={styles.legend}>
+        <div><span className={`${styles.dot} ${styles.blue}`}></span>{`TTFB (${formatVitalValue(metrics.ttfb)})`}</div>
+        <div><span className={`${styles.dot} ${styles.yellow}`}></span>{`FCP (${formatVitalValue(metrics.fcp)})`}</div>
+        <div><span className={`${styles.dot} ${styles.green}`}></span>{`LCP (${formatVitalValue(metrics.lcp)})`}</div>
       </div>
     </div>
   );
-};
+}
 
-export default VitalsTimelineBar;
+export default VitalsTimelineBar

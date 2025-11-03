@@ -54,13 +54,18 @@ const INPContainer = () => {
     <div className={styles.inpContainer}>
       <VitalHeadingContainer vitalType="INP" value={webVitalsData["INP"].value} description={DESCRIPTION_TEXT.INP} />
         <VitalMainIndicator good={200} poor={500} unit="ms" value={webVitalsData["INP"].value} variant="INP"/>
-        <p className={styles.sectionTopic}>Element Info:</p>
-        <p className={styles.sectionDescription}>Click this section to highlight the element in page where the longest INP occurred.</p>
-        <div className={styles.elementTypeContainer} onClick={highlightINPElement}>
-          <div>Element Type</div>
-          <div className='bold-text'>{`${elementType} element`}</div>
-        </div>
-        <DebugInfoConatainer debugInfo={inpDebugInfo} variant="INP"/>
+        {
+          webVitalsData["INP"].value >= 0 ? 
+          <>
+          <p className={styles.sectionTopic}>Element Info:</p>
+          <p className={styles.sectionDescription}>Click this section to highlight the element in page where the longest INP occurred.</p>
+          <div className={styles.elementTypeContainer} onClick={highlightINPElement}>
+            <div>Element Type</div>
+            <div className='bold-text'>{`${elementType} element`}</div>
+          </div>
+          <DebugInfoConatainer debugInfo={inpDebugInfo} variant="INP"/>
+          </> : null 
+        }
 
     </div>
   )

@@ -35,9 +35,9 @@ export const formatVitalValue = (value, variant) => {
     if(variant === "CLS") {
          return `${Number((value).toFixed(4))}`;
     } else if (value < 1000) {
-        return `${Number((value).toFixed(3))} ms`;
+        return `${Number((value).toFixed(3))}ms`;
     } else {
         const seconds = Number((value / 1000).toFixed(3));
-        return `${seconds} s`;
+        return `${seconds}s`;
     }
 }

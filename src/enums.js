@@ -12,7 +12,7 @@ export const NAV_OPTIONS = {
     CLS: "CLS",
     TTFB: "TTFB",
     FCP: "FCP",
-    THROTTLE: "Throttle"
+    AUDIT: "Audit"
 
 }
 

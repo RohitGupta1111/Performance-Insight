@@ -61,10 +61,12 @@ const TTFBComponent = () => {
 
 
   return (
-    <div className={styles.lcpContainer}>
-      <VitalHeadingContainer vitalType="TTFB" value={`${webVitalsData["TTFB"].value}ms`} description={DESCRIPTION_TEXT.TTFB} />
-        <VitalMainIndicator good={2.5} poor={4} unit="s" value={webVitalsData["TTFB"].value}/>
-        <DebugInfoConatainer debugInfo={ttfbDebugInfo}/>
+    <div className={styles.ttfbContainer}>
+      <VitalHeadingContainer vitalType="TTFB" value={webVitalsData["TTFB"].value} description={DESCRIPTION_TEXT.TTFB} />
+        <VitalMainIndicator good={200} poor={500} unit="ms" value={webVitalsData["TTFB"].value} variant="TTFB"/>
+        { webVitalsData["TTFB"].value >= 0 ?
+        <DebugInfoConatainer debugInfo={ttfbDebugInfo} variant="TTFB"/>
+         :null}
     </div>
   )
 }

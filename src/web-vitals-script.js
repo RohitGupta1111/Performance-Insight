@@ -22,6 +22,10 @@ const inpPO = new PerformanceObserver((list) => {
 inpPO.observe({ type: 'event', buffered: true, durationThreshold: 16});
 inpPO.observe({type: 'first-input', buffered: true,});
 
+document.addEventListener("onclick", () => {
+  removeAllOverlayLayout();
+})
+
 const clsPO = new PerformanceObserver((list) => {
     const filteredList = list.getEntries().filter((entry) => !entry.hadRecentInput)
     layoutShiftEntries.push(...filteredList);
@@ -142,6 +146,94 @@ window._getTop5SourceRects = (entries) => {
   const allSourcesWithNode = enrichWithNodes(allSources);
   chrome.runtime.sendMessage({ type: "top-layout-shift-data", data: allSourcesWithNode});
 }
+
+function ensureOverlayControlPanel() {
+  if (document.getElementById("web-vitals-overlay-panel")) return;
+
+  const panel = document.createElement("div");
+  panel.id = "web-vitals-overlay-panel";
+  panel.innerHTML = `
+  <style>
+    #web-vitals-overlay-panel {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 2147483647;
+      background: rgba(30,30,30,0.92);
+      color: #fff;
+      font-family: system-ui, sans-serif;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      user-select: none;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.6), 0 0 5px rgba(0, 0, 0, 0.3);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      animation: panel-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes panel-pulse {
+      0%, 100% { box-shadow: 0 0 10px rgba(0,255,255,0.4), 0 0 3px rgba(0,0,0,0.3); }
+      50% { box-shadow: 0 0 18px rgba(0,255,255,0.8), 0 0 8px rgba(0,0,0,0.4); }
+    }
+
+    #web-vitals-overlay-panel button {
+      background: linear-gradient(145deg, #00c8ff, #007bff);
+      border: none;
+      color: white;
+      border-radius: 6px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    #web-vitals-overlay-panel button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(0,200,255,0.6);
+    }
+
+    #web-vitals-overlay-panel button:active {
+      transform: scale(0.97);
+    }
+
+    /* Optional: subtle fade-in when panel appears */
+    #web-vitals-overlay-panel.fade-in {
+      opacity: 0;
+      transform: translateY(-10px);
+      animation: fadeIn 0.4s forwards ease;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+  <button id="wv-hide">Hide</button>
+  <button id="wv-clear">Clear</button>
+`;
+
+  
+  document.body.appendChild(panel);
+  panel.classList.add('fade-in');
+
+
+  document.getElementById("wv-hide").onclick = () => {
+    const overlays = document.querySelectorAll(".cls-highlight-overlay, #element-highlight-overlay");
+    overlays.forEach(o => o.style.display = o.style.display === "none" ? "block" : "none");
+  };
+
+  document.getElementById("wv-clear").onclick = () => {
+    document.querySelectorAll(".cls-highlight-overlay, #element-highlight-overlay").forEach(o => o.remove());
+    document.getElementById("web-vitals-overlay-panel")?.remove();
+  };
+}
+
 
 function updateINPEntryFromPerformanceObserver (webVitalEntry)  {
     const {startTime, processingStart, processingEnd} = webVitalEntry;
@@ -273,32 +365,8 @@ window._highlightCLSShiftRects = (previousRect, currentRect) => {
   const oldOverlay = createOverlay(previousRect, "#ff0000", "Old (before)");
   const newOverlay = createOverlay(currentRect, "#00ff00", "New (after)");
 
-  // Add a close button
-  const closeBtn = document.createElement("div");
-  closeBtn.textContent = "✕";
-  closeBtn.style.position = "fixed";
-  closeBtn.style.top = "10px";
-  closeBtn.style.right = "10px";
-  closeBtn.style.width = "24px";
-  closeBtn.style.height = "24px";
-  closeBtn.style.borderRadius = "50%";
-  closeBtn.style.background = "black";
-  closeBtn.style.color = "white";
-  closeBtn.style.fontSize = "16px";
-  closeBtn.style.display = "flex";
-  closeBtn.style.alignItems = "center";
-  closeBtn.style.justifyContent = "center";
-  closeBtn.style.cursor = "pointer";
-  closeBtn.style.zIndex = "1000000";
-  closeBtn.title = "Close highlight";
+  ensureOverlayControlPanel();
 
-  closeBtn.addEventListener("click", () => {
-    oldOverlay.remove();
-    newOverlay.remove();
-    closeBtn.remove();
-  });
-
-  document.body.appendChild(closeBtn);
 
   // Scroll to bring the new rect into view
   window.scrollTo({
@@ -324,14 +392,14 @@ window._highlightElementByType = (type) => {
         if (!element) return;
 
         // Remove old overlay if it existss
-        const oldOverlay = document.getElementById("lcp-highlight-overlay");
+        const oldOverlay = document.getElementById("element-highlight-overlay");
         if (oldOverlay) oldOverlay.remove();
 
         const rect = element.getBoundingClientRect();
 
         // Create overlay container
         const overlay = document.createElement("div");
-        overlay.id = "lcp-highlight-overlay";
+        overlay.id = "element-highlight-overlay";
         overlay.style.position = "fixed";
         overlay.style.left = rect.left + "px";
         overlay.style.top = rect.top + "px";
@@ -342,30 +410,9 @@ window._highlightElementByType = (type) => {
         overlay.style.zIndex = "999999";
         overlay.style.pointerEvents = "none"; // allow clicks to pass through
 
-        // Add close button
-        const closeBtn = document.createElement("div");
-        closeBtn.textContent = "✕";
-        closeBtn.style.position = "absolute";
-        closeBtn.style.top = "-10px";
-        closeBtn.style.right = "-10px";
-        closeBtn.style.width = "22px";
-        closeBtn.style.height = "22px";
-        closeBtn.style.borderRadius = "50%";
-        closeBtn.style.background = "red";
-        closeBtn.style.color = "white";
-        closeBtn.style.fontSize = "14px";
-        closeBtn.style.fontWeight = "bold";
-        closeBtn.style.textAlign = "center";
-        closeBtn.style.cursor = "pointer";
-        closeBtn.style.pointerEvents = "auto"; // clickable!
-        closeBtn.title = "Close highlight";
-
-        closeBtn.addEventListener("click", () => {
-            overlay.remove();
-        });
-
-        overlay.appendChild(closeBtn);
         document.body.appendChild(overlay);
+        ensureOverlayControlPanel();
+
 
         // Scroll into view
         element.scrollIntoView({ behavior: "smooth", block: "center" });

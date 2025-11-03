@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import VitalMainIndicator from './VitalMainIndicator'
 import WebVitalsContext from '../context/WebVitalsContext'
-import styles from "./FCPComponent.module.css";
 import { VitalHeadingContainer } from './VitalHeadingContainer';
 import { DESCRIPTION_TEXT } from '../constants';
 import VitalsTimelineBar from './VitalsTimeLineBar';
@@ -11,10 +10,13 @@ const FCPComponent = () => {
 
 
   return (
-    <div className={styles.lcpContainer}>
-      <VitalHeadingContainer vitalType="FCP" value={`${webVitalsData["FCP"].value}ms`} description={DESCRIPTION_TEXT.FCP} />
-        <VitalMainIndicator good={2.5} poor={4} unit="s" value={webVitalsData["FCP"].value}/>
-        <VitalsTimelineBar />
+    <div>
+      <VitalHeadingContainer vitalType="FCP" value={webVitalsData["FCP"].value} description={DESCRIPTION_TEXT.FCP}/>
+        <VitalMainIndicator good={1} poor={2} unit="s" value={webVitalsData["FCP"].value} variant="FCP"/>
+        {
+          webVitalsData["FCP"].value >= 0 ?
+          <VitalsTimelineBar />:null
+        }
 
     </div>
   )

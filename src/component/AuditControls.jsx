@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styles from "./ThrottlingControls.module.css";
+import styles from "./AuditControls.module.css";
 
 const NETWORK_PRESETS = {
   "No Throttle (Baseline)": { latency: 0, download: 0, upload: 0, cpu: 1 },
@@ -10,7 +10,7 @@ const NETWORK_PRESETS = {
   Custom: { latency: "", download: "", upload: "", cpu: "" },
 };
 
-const ThrottlingControls = () => {
+const AuditControls = () => {
   const [selectedPreset, setSelectedPreset] = useState("No Throttle (Baseline)");
   const [customValues, setCustomValues] = useState({
     latency: 150,
@@ -148,19 +148,78 @@ const ThrottlingControls = () => {
       >
         {loading ? "Applying..." : "Apply & Reload"}
       </button>
-      <button
-        className={styles.psiButton}
-        onClick={async () => {
-            const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-            const url = encodeURIComponent(tab.url);
-            chrome.tabs.create({ url: `https://pagespeed.web.dev/report?url=${url}` });
-        }}
-        >
-        <span className="material-icons">insights</span>
-        Analyze in PageSpeed Insights
-        </button>
+      <div className={styles.analysisSection}>
+  <div className={styles.analysisSection}>
+  <div className={styles.analysisHeader}>
+    <span className="material-symbols-outlined">analytics</span>
+    <span>Analysis Tools</span>
+  </div>
+
+  <div className={styles.toolGrid}>
+    {/* PageSpeed Insights */}
+    <div
+      className={styles.toolCard}
+      onClick={async () => {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        const url = encodeURIComponent(tab.url);
+        chrome.tabs.create({ url: `https://pagespeed.web.dev/report?url=${url}` });
+      }}
+    >
+      <div className={styles.toolLeft}>
+        <span className="material-symbols-outlined">insights</span>
+        <div>
+          <div className={styles.toolName}>PageSpeed Insights</div>
+          <div className={styles.toolDesc}>View Core Web Vitals & lab data</div>
+        </div>
+      </div>
+      <span className={`material-symbols-outlined ${styles.openIcon}`}>open_in_new</span>
+    </div>
+
+    {/* Treo Site Speed */}
+    <div
+      className={styles.toolCard}
+      onClick={async () => {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        const url = encodeURIComponent(tab.url);
+        chrome.tabs.create({ url: `https://treo.sh/sitespeed/${url}` });
+      }}
+    >
+      <div className={styles.toolLeft}>
+        <span className="material-symbols-outlined">speed</span>
+        <div>
+          <div className={styles.toolName}>Treo Site Speed</div>
+          <div className={styles.toolDesc}>Analyze performance benchmarks</div>
+        </div>
+      </div>
+      <span className={`material-symbols-outlined ${styles.openIcon}`}>open_in_new</span>
+    </div>
+
+    {/* CrUXVis */}
+    <div
+      className={styles.toolCard}
+      onClick={async () => {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        const url = encodeURIComponent(tab.url);
+        chrome.tabs.create({ url: `https://cruxvis.withgoogle.com/explore?url=${url}` });
+      }}
+    >
+      <div className={styles.toolLeft}>
+        <span className="material-symbols-outlined">timeline</span>
+        <div>
+          <div className={styles.toolName}>CrUXVis Historical Data</div>
+          <div className={styles.toolDesc}>Explore field data over time</div>
+        </div>
+      </div>
+      <span className={`material-symbols-outlined ${styles.openIcon}`}>open_in_new</span>
+    </div>
+  </div>
+</div>
+
+
+</div>
+
     </div>
   );
 };
 
-export default ThrottlingControls;
+export default AuditControls;

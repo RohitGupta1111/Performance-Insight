@@ -9,16 +9,23 @@ import CLSComponent from  './CLSComponent';
 import WebVitalsContext from '../context/WebVitalsContext';
 import TTFBComponent from './TTFBComponent';
 import FCPComponent from './FCPComponent';
-import ThrottlingControls from './ThrottlingControls';
+import AuditControls from './AuditControls';
 
 function App() {
   const [selectedNavOption, setsSelectedNavOption] = useState(NAV_OPTIONS.MAIN);
   const {setWebVitalsData} = useContext(WebVitalsContext);
 
-  useEffect(() => {
-    chrome.storage.local.get(null, data => {
-      setWebVitalsData((webVitalsData) => ({...webVitalsData, ...data}));
-    })
+  useEffect(async () => {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    const tabId = tab?.id;
+    if (tabId) {
+      const vitals = await chrome.runtime.sendMessage({
+        type: "get-tab-vitals",
+        tabId
+      });
+      setWebVitalsData((webVitalsData) => ({...webVitalsData, ...vitals}));
+    }
+
   },[]);
 
   const renderMainContent = () => {
@@ -35,8 +42,8 @@ function App() {
         return <TTFBComponent />
       case NAV_OPTIONS.FCP:
         return <FCPComponent />
-      case NAV_OPTIONS.THROTTLE:
-        return <ThrottlingControls />
+      case NAV_OPTIONS.AUDIT:
+        return <AuditControls />
       default:
         return <DashboardComponent/>
     }
@@ -70,9 +77,9 @@ function App() {
               <span className="material-symbols-outlined">format_paint</span>
               <span className='nav-text'>{NAV_OPTIONS.FCP}</span>
           </li>
-          <li className={ selectedNavOption === NAV_OPTIONS.THROTTLE ? 'active': ''} onClick={(e) => setsSelectedNavOption(NAV_OPTIONS.THROTTLE)}>
-              <span className="material-symbols-outlined">format_paint</span>
-              <span className='nav-text'>{NAV_OPTIONS.THROTTLE}</span>
+          <li className={ selectedNavOption === NAV_OPTIONS.AUDIT ? 'active': ''} onClick={(e) => setsSelectedNavOption(NAV_OPTIONS.AUDIT)}>
+              <span className="material-symbols-outlined">fact_check</span>
+              <span className='nav-text'>{NAV_OPTIONS.AUDIT}</span>
           </li>
         </ul>
       </nav>

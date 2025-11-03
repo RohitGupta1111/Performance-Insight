@@ -1,11 +1,7 @@
 .container {
   display: flex;
   flex-direction: column;
-  background: #fafafa;
-  border-radius: 12px;
-  padding: 16px 20px;
   margin: 16px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
   width: 440px;
 }
 
@@ -46,7 +42,7 @@
   background: #fff;
   border-radius: 8px;
   border: 1px solid #e2e2e2;
-  padding: 10px 14px;
+  padding: 10px 0px;
   margin-bottom: 12px;
   font-size: 13px;
   color: #333;
@@ -112,23 +108,73 @@
   cursor: not-allowed;
 }
 
-.psiButton {
+/* ===== ANALYSIS SECTION ===== */
+
+.analysisSection {
+  display: flex;
+  flex-direction: column;
+  margin-top: 16px;
+}
+
+.analysisHeader {
   display: flex;
   align-items: center;
-  gap: 6px;
-  background: #f3f4f6;
-  color: #333;
-  border: 1px solid #ccc;
+  font-weight: bold;
+  font-size: 15px;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+/* ===== TOOL CARDS ===== */
+
+.toolGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.toolCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #e2e2e2;
   border-radius: 8px;
-  padding: 8px 16px;
-  font-size: 13px;
+  padding: 10px 12px;
   cursor: pointer;
-  align-self: flex-end;
-  transition: background 0.2s;
-  margin-top: 8px;
+  transition: background 0.2s, box-shadow 0.2s;
 }
 
-.psiButton:hover {
-  background: #e0e0e0;
+.toolCard:hover {
+  background: #f8f9fa;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+.toolLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toolName {
+  font-weight: 500;
+  font-size: 13px;
+  color: #222;
+  text-align: start;
+}
+
+.toolDesc {
+  font-size: 12px;
+  color: #666;
+}
+
+.openIcon {
+  font-size: 18px;
+  color: #666;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.toolCard:hover .openIcon {
+  opacity: 1;
+}
