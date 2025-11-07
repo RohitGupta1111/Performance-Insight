@@ -214,6 +214,7 @@ function ensureOverlayControlPanel() {
       to { opacity: 1; transform: translateY(0); }
     }
   </style>
+  <div>🔍 Web Vitals Overlay</div>
   <button id="wv-hide">Hide</button>
   <button id="wv-clear">Clear</button>
 `;
@@ -229,43 +230,49 @@ function ensureOverlayControlPanel() {
   };
 
   document.getElementById("wv-clear").onclick = () => {
-    document.querySelectorAll(".cls-highlight-overlay, #element-highlight-overlay").forEach(o => o.remove());
-    document.getElementById("web-vitals-overlay-panel")?.remove();
+    setTimeout(() => {
+      document.querySelectorAll(".cls-highlight-overlay, #element-highlight-overlay").forEach(o => o.remove());
+      document.getElementById("web-vitals-overlay-panel")?.remove();
+    }, 500);
+    
   };
 }
 
 
 function updateINPEntryFromPerformanceObserver (webVitalEntry)  {
-    const {startTime, processingStart, processingEnd} = webVitalEntry;
-    const threshold = 20;
+    const {interactionId, name} = webVitalEntry;
+    // const threshold = 20;
 
     for (const entry of inpEventEntries) {
         if (entry.entryType !== "event" && entry.entryType !== "first-input") continue;
 
-        const diffStart = Math.abs(entry.startTime - startTime);
-        const diffProcStart = Math.abs(entry.processingStart - processingStart);
-        const diffProcEnd = Math.abs(entry.processingEnd - processingEnd);
+        // const diffStart = Math.abs(entry.startTime - startTime);
+        // const diffProcStart = Math.abs(entry.processingStart - processingStart);
+        // const diffProcEnd = Math.abs(entry.processingEnd - processingEnd);
 
-        if (diffStart < threshold && diffProcStart < threshold && diffProcEnd < threshold) {
+        if (entry.interactionId === interactionId && entry.name === name && entry.target.id !== "wv-hide" && entry.target.id !== "wv-clear") {
             inpEntry = entry;
-            console.log(entry.target);
         }
     }
+
+    inpEventEntries = [];
 }
 
 window._getWebVitals = () => {
     const sendWebVitals = (metric) => {
         console.log("My extension" + JSON.stringify(metric));
-        chrome.runtime.sendMessage({ type: "web-vitals", data: metric});
         if(metric.entries.length >= 1) {
             setTimeout(() => {
                 if(metric.name === "INP") {
                     const entry = metric.entries[metric.entries.length-1];
+                    if(entry.target.id === "wv-hide" && entry.target.id === "Wv.clear") return;
                     updateINPEntryFromPerformanceObserver(entry);
                 }
                 
-            }, 1000);
+            }, 0);
         }
+        chrome.runtime.sendMessage({ type: "web-vitals", data: metric});
+
     }
     onCLS(sendWebVitals, {reportAllChanges: true});
     onFCP(sendWebVitals, {reportAllChanges: true});
@@ -390,54 +397,59 @@ window._highlightElementByType = (type) => {
     const element = getElementByVitalType(type);
     if(element) {
         if (!element) return;
-
-        // Remove old overlay if it existss
-        const oldOverlay = document.getElementById("element-highlight-overlay");
-        if (oldOverlay) oldOverlay.remove();
-
-        const rect = element.getBoundingClientRect();
-
-        // Create overlay container
-        const overlay = document.createElement("div");
-        overlay.id = "element-highlight-overlay";
-        overlay.style.position = "fixed";
-        overlay.style.left = rect.left + "px";
-        overlay.style.top = rect.top + "px";
-        overlay.style.width = rect.width + "px";
-        overlay.style.height = rect.height + "px";
-        overlay.style.background = "rgba(255, 0, 0, 0.15)"; // translucent red tint
-        overlay.style.border = "8px solid red";
-        overlay.style.zIndex = "999999";
-        overlay.style.pointerEvents = "none"; // allow clicks to pass through
-
-        document.body.appendChild(overlay);
-        ensureOverlayControlPanel();
-
-
         // Scroll into view
-        element.scrollIntoView({ behavior: "smooth", block: "center" });
+        // element.scrollIntoView({ behavior: "smooth", block: "center" });
 
-        // Optional: reposition overlay on scroll/resize
-        const reposition = () => {
-            const newRect = element.getBoundingClientRect();
-            overlay.style.left = newRect.left + "px";
-            overlay.style.top = newRect.top + "px";
-            overlay.style.width = newRect.width + "px";
-            overlay.style.height = newRect.height + "px";
-        };
+        setTimeout(() => {
+          // Remove old overlay if it existss
+          const oldOverlay = document.getElementById("element-highlight-overlay");
+          if (oldOverlay) oldOverlay.remove();
 
-        window.addEventListener("scroll", reposition);
-        window.addEventListener("resize", reposition);
+          const rect = element.getBoundingClientRect();
 
-        // Cleanup listener if overlay removed
-        const observer = new MutationObserver(() => {
-            if (!document.body.contains(overlay)) {
-                window.removeEventListener("scroll", reposition);
-                window.removeEventListener("resize", reposition);
-                observer.disconnect();
-            }
-        });
-        observer.observe(document.body, { childList: true });
+          // Create overlay container
+          const overlay = document.createElement("div");
+          overlay.id = "element-highlight-overlay";
+          overlay.style.position = "fixed";
+          overlay.style.left = rect.left + "px";
+          overlay.style.top = rect.top + "px";
+          overlay.style.width = rect.width + "px";
+          overlay.style.height = rect.height + "px";
+          overlay.style.background = "rgba(255, 0, 0, 0.15)"; // translucent red tint
+          overlay.style.border = "8px solid red";
+          overlay.style.zIndex = "999999";
+          overlay.style.pointerEvents = "none"; // allow clicks to pass through
+
+          document.body.appendChild(overlay);
+          ensureOverlayControlPanel();
+
+
+          
+
+          // Optional: reposition overlay on scroll/resize
+          const reposition = () => {
+              const newRect = element.getBoundingClientRect();
+              overlay.style.left = newRect.left + "px";
+              overlay.style.top = newRect.top + "px";
+              overlay.style.width = newRect.width + "px";
+              overlay.style.height = newRect.height + "px";
+          };
+
+          window.addEventListener("scroll", reposition);
+          window.addEventListener("resize", reposition);
+
+          // Cleanup listener if overlay removed
+          const observer = new MutationObserver(() => {
+              if (!document.body.contains(overlay)) {
+                  window.removeEventListener("scroll", reposition);
+                  window.removeEventListener("resize", reposition);
+                  observer.disconnect();
+              }
+          });
+          observer.observe(document.body, { childList: true });
+        }, 100);
+
+        
     }
     
 }
