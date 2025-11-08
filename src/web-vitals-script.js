@@ -2,6 +2,8 @@ import { onCLS, onFCP, onLCP, onINP, onTTFB } from "web-vitals";
 
 let lcpElement = null;
 let inpEntry = null;
+let lastCLSValue = 0;              // Track last CLS score
+let lastEntriesLength = 0; 
 let inpEventEntries = [];
 let layoutShiftEntries = [];
 const inpPO = new PerformanceObserver((list) => {
@@ -22,9 +24,6 @@ const inpPO = new PerformanceObserver((list) => {
 inpPO.observe({ type: 'event', buffered: true, durationThreshold: 16});
 inpPO.observe({type: 'first-input', buffered: true,});
 
-document.addEventListener("onclick", () => {
-  removeAllOverlayLayout();
-})
 
 const clsPO = new PerformanceObserver((list) => {
     const filteredList = list.getEntries().filter((entry) => !entry.hadRecentInput)
@@ -133,6 +132,8 @@ window._getTop5SourceRects = (entries) => {
         startTime: entry.startTime,
         previousRect: src.previousRect,
         currentRect: src.currentRect,
+        oldRect: src.oldRect,
+        newRect: src.newRect
       });
     }
   }
@@ -141,100 +142,66 @@ window._getTop5SourceRects = (entries) => {
   allSources.sort((a, b) => b.score - a.score);
 
   // Take the top 5
-  allSources.slice(0, 5);
+  const slicedSources = allSources.slice(0, 5);
 
-  const allSourcesWithNode = enrichWithNodes(allSources);
-  chrome.runtime.sendMessage({ type: "top-layout-shift-data", data: allSourcesWithNode});
+  const slicedSourcesWithNode = enrichWithNodes(slicedSources);
+  chrome.runtime.sendMessage({ type: "top-layout-shift-data", data: slicedSourcesWithNode});
 }
 
-function ensureOverlayControlPanel() {
-  if (document.getElementById("web-vitals-overlay-panel")) return;
+function ensureOverlayControlPanel() {if (document.getElementById("web-vitals-overlay-panel")) return;
 
   const panel = document.createElement("div");
   panel.id = "web-vitals-overlay-panel";
   panel.innerHTML = `
-  <style>
-    #web-vitals-overlay-panel {
-      position: fixed;
-      top: 16px;
-      right: 16px;
-      z-index: 2147483647;
-      background: rgba(30,30,30,0.92);
-      color: #fff;
-      font-family: system-ui, sans-serif;
-      padding: 10px 14px;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 500;
-      user-select: none;
-      box-shadow: 0 0 15px rgba(0, 255, 255, 0.6), 0 0 5px rgba(0, 0, 0, 0.3);
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      transition: opacity 0.3s ease, transform 0.3s ease;
-      animation: panel-pulse 2s ease-in-out infinite;
-    }
+    <div id="wv-header">🔍 Web Vitals Overlay
+      <button id="wv-hide">Hide</button>
+      <button id="wv-clear">Clear</button>
+    </div>
+  `;
+  panel.style.cssText = `
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    background: rgba(30,30,30,0.92);
+    color: white;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: move;
+    z-index: 2147483647;
+  `;
 
-    @keyframes panel-pulse {
-      0%, 100% { box-shadow: 0 0 10px rgba(0,255,255,0.4), 0 0 3px rgba(0,0,0,0.3); }
-      50% { box-shadow: 0 0 18px rgba(0,255,255,0.8), 0 0 8px rgba(0,0,0,0.4); }
-    }
-
-    #web-vitals-overlay-panel button {
-      background: linear-gradient(145deg, #00c8ff, #007bff);
-      border: none;
-      color: white;
-      border-radius: 6px;
-      padding: 6px 10px;
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 600;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.4);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    #web-vitals-overlay-panel button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 10px rgba(0,200,255,0.6);
-    }
-
-    #web-vitals-overlay-panel button:active {
-      transform: scale(0.97);
-    }
-
-    /* Optional: subtle fade-in when panel appears */
-    #web-vitals-overlay-panel.fade-in {
-      opacity: 0;
-      transform: translateY(-10px);
-      animation: fadeIn 0.4s forwards ease;
-    }
-
-    @keyframes fadeIn {
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
-  <div>🔍 Web Vitals Overlay</div>
-  <button id="wv-hide">Hide</button>
-  <button id="wv-clear">Clear</button>
-`;
-
-  
   document.body.appendChild(panel);
-  panel.classList.add('fade-in');
 
+  // Drag support
+  const header = panel.querySelector("#wv-header");
+  let offsetX = 0, offsetY = 0, isDragging = false;
 
+  header.onmousedown = (e) => {
+    isDragging = true;
+    offsetX = e.clientX - panel.offsetLeft;
+    offsetY = e.clientY - panel.offsetTop;
+  };
+
+  window.onmousemove = (e) => {
+    if (isDragging) {
+      panel.style.left = e.clientX - offsetX + "px";
+      panel.style.top = e.clientY - offsetY + "px";
+      panel.style.right = "auto"; // so it stops snapping back
+    }
+  };
+
+  window.onmouseup = () => (isDragging = false);
+
+  // Action buttons remain same
   document.getElementById("wv-hide").onclick = () => {
-    const overlays = document.querySelectorAll(".cls-highlight-overlay, #element-highlight-overlay");
-    overlays.forEach(o => o.style.display = o.style.display === "none" ? "block" : "none");
+    document.querySelectorAll(".cls-highlight-overlay, #element-highlight-overlay")
+      .forEach(o => o.style.display = o.style.display === "none" ? "block" : "none");
   };
 
   document.getElementById("wv-clear").onclick = () => {
-    setTimeout(() => {
-      document.querySelectorAll(".cls-highlight-overlay, #element-highlight-overlay").forEach(o => o.remove());
-      document.getElementById("web-vitals-overlay-panel")?.remove();
-    }, 500);
-    
+    document.querySelectorAll(".cls-highlight-overlay, #element-highlight-overlay").forEach(o => o.remove());
+    panel.remove();
   };
 }
 
@@ -258,20 +225,88 @@ function updateINPEntryFromPerformanceObserver (webVitalEntry)  {
     inpEventEntries = [];
 }
 
+function getMetricWithDocumentRects(metric) {
+  const convertRect = (rect) => {
+    if (!rect) return null;
+    return {
+      top: rect.top,
+      left: rect.left,
+      scrollX: window.scrollX,
+      scrollY: window.scrollY,
+      width: rect.width,
+      height: rect.height,
+    };
+  };
+
+  return {
+    ...metric, // copies value, id, navigationType, etc.
+    entries: metric.entries.map(entry => ({
+      // ✅ Copy PerformanceEntry fields explicitly (they're not enumerable!)
+      name: entry.name,
+      entryType: entry.entryType,
+      startTime: entry.startTime,
+      duration: entry.duration,
+      value: entry.value,
+      hadRecentInput: entry.hadRecentInput,
+      // keep other layout shift fields:
+      sources: entry.sources?.map(source => ({
+        node: source.node || null,
+        previousRect: source.previousRect, // viewport-based
+        currentRect: source.currentRect,   // viewport-based
+        oldRect: convertRect(source.previousRect), // doc-based
+        newRect: convertRect(source.currentRect),  // doc-based
+      })) || []
+    }))
+  };
+}
+
+function pruneLayoutShiftArray(currentCLSEntries, currentCLSValue) {
+  // 1️⃣ If CLS is final or page is hidden → clear everything
+  if (document.visibilityState === 'hidden' || currentCLSEntries == null) {
+    layoutShiftEntries = [];
+    return;
+  }
+
+  // 2️⃣ Detect CLS session reset:
+  //    CLS value increases AND entries list size becomes smaller → new window replaced old
+  if (currentCLSValue > lastCLSValue && currentCLSEntries.length < lastEntriesLength) {
+    // The CLS session was reset to a new (higher scoring) one.
+    // Remove all raw layout-shifts that happened before the first entry of the new CLS session.
+    
+    const firstRelevantStartTime = currentCLSEntries[0]?.startTime || 0;
+
+    layoutShiftEntries = layoutShiftEntries.filter(ls =>
+      ls.startTime >= firstRelevantStartTime
+    );
+  }
+
+  // ✅ Update history values for next cycle
+  lastEntriesLength = currentCLSEntries.length;
+  lastCLSValue = currentCLSValue;
+}
+
+
+
+
 window._getWebVitals = () => {
     const sendWebVitals = (metric) => {
+        let updatedMetric = metric;
         console.log("My extension" + JSON.stringify(metric));
         if(metric.entries.length >= 1) {
+          if(metric.name === "INP") {
             setTimeout(() => {
-                if(metric.name === "INP") {
-                    const entry = metric.entries[metric.entries.length-1];
-                    if(entry.target.id === "wv-hide" && entry.target.id === "Wv.clear") return;
-                    updateINPEntryFromPerformanceObserver(entry);
-                }
-                
+              const entry = metric.entries[metric.entries.length-1];
+              if(entry.target.id === "wv-hide" && entry.target.id === "Wv.clear") return;
+              updateINPEntryFromPerformanceObserver(entry);
             }, 0);
+          } else if(metric.name === "CLS") {
+            updatedMetric = getMetricWithDocumentRects(metric);
+            setTimeout(() => {
+              pruneLayoutShiftArray(metric.entries, metric.value);
+            }, 0)
+          }
         }
-        chrome.runtime.sendMessage({ type: "web-vitals", data: metric});
+        chrome.runtime.sendMessage({ type: "web-vitals", data: updatedMetric});
 
     }
     onCLS(sendWebVitals, {reportAllChanges: true});
@@ -295,13 +330,13 @@ function getElementByVitalType(type) {
 
 function getElementType(entry) {
     const elem = entry.element || entry.target;
-    if (!elem) return "unknown";
+    if (!elem) return "null";
 
     if (entry.initiatorType === "img" || elem.tagName === "IMG") return "image";
     if (entry.initiatorType === "video" || elem.tagName === "VIDEO") return "video";
     if (!entry.name && elem.textContent && elem.textContent.trim().length > 0) return "text";
 
-    return "other"; // e.g., div with background image
+    return elem.tagName.toLowerCase(); // e.g., div with background image
 }
 
 window._getLCPEntryFromPerformanceObserver = () => {
@@ -339,12 +374,16 @@ window._highlightCLSShiftRects = (previousRect, currentRect) => {
 
     const overlay = document.createElement("div");
     overlay.className = "cls-highlight-overlay";
-    overlay.style.position = "fixed";
+    overlay.style.position = "absolute";
     
-    overlay.style.left = rect.x / scale + "px";
-    overlay.style.top = rect.y / scale + "px";
+    overlay.style.left = rect.left / scale + rect.scrollX + "px";
+    overlay.style.top = rect.top / scale + rect.scrollY + "px";
     overlay.style.width = rect.width / scale + "px";
     overlay.style.height = rect.height / scale + "px";
+    // overlay.style.left = rect.left + "px";
+    // overlay.style.top  = rect.top  + "px";
+    // overlay.style.width  = rect.width  + "px";
+    // overlay.style.height = rect.height + "px";
     overlay.style.border = `3px solid ${color}`;
     overlay.style.background = `${color}22`; // translucent fill
     overlay.style.zIndex = "999999";
@@ -374,13 +413,6 @@ window._highlightCLSShiftRects = (previousRect, currentRect) => {
 
   ensureOverlayControlPanel();
 
-
-  // Scroll to bring the new rect into view
-  window.scrollTo({
-    top: currentRect.y + window.scrollY - window.innerHeight / 2,
-    left: currentRect.x + window.scrollX - window.innerWidth / 2,
-    behavior: "smooth",
-  });
 }
 
 window._getINPEntryFromPerformanceObserver = () => {
@@ -394,62 +426,32 @@ window._getINPEntryFromPerformanceObserver = () => {
 }
 
 window._highlightElementByType = (type) => {
-    const element = getElementByVitalType(type);
-    if(element) {
-        if (!element) return;
-        // Scroll into view
-        // element.scrollIntoView({ behavior: "smooth", block: "center" });
+  const element = getElementByVitalType(type);
+  if (!element) return;
 
-        setTimeout(() => {
-          // Remove old overlay if it existss
-          const oldOverlay = document.getElementById("element-highlight-overlay");
-          if (oldOverlay) oldOverlay.remove();
+  // Remove old overlay if it exists
+  const oldOverlay = document.getElementById("element-highlight-overlay");
+  if (oldOverlay) oldOverlay.remove();
 
-          const rect = element.getBoundingClientRect();
+  // Optional: bring element into view
+  element.scrollIntoView({ behavior: "smooth", block: "center" });
 
-          // Create overlay container
-          const overlay = document.createElement("div");
-          overlay.id = "element-highlight-overlay";
-          overlay.style.position = "fixed";
-          overlay.style.left = rect.left + "px";
-          overlay.style.top = rect.top + "px";
-          overlay.style.width = rect.width + "px";
-          overlay.style.height = rect.height + "px";
-          overlay.style.background = "rgba(255, 0, 0, 0.15)"; // translucent red tint
-          overlay.style.border = "8px solid red";
-          overlay.style.zIndex = "999999";
-          overlay.style.pointerEvents = "none"; // allow clicks to pass through
+  // Get rect in document coordinates
+  const rect = element.getBoundingClientRect();
 
-          document.body.appendChild(overlay);
-          ensureOverlayControlPanel();
+  const overlay = document.createElement("div");
+  overlay.id = "element-highlight-overlay";
+  overlay.style.position = "absolute"; // ✅ Document-relative positioning
+  overlay.style.top = rect.top + window.scrollY + "px";
+  overlay.style.left = rect.left + window.scrollX + "px";
+  overlay.style.width = rect.width + "px";
+  overlay.style.height = rect.height + "px";
+  overlay.style.background = "rgba(255, 0, 0, 0.15)";
+  overlay.style.border = "8px solid red";
+  overlay.style.zIndex = "999999";
+  overlay.style.pointerEvents = "none";
 
+  document.body.appendChild(overlay);  
 
-          
-
-          // Optional: reposition overlay on scroll/resize
-          const reposition = () => {
-              const newRect = element.getBoundingClientRect();
-              overlay.style.left = newRect.left + "px";
-              overlay.style.top = newRect.top + "px";
-              overlay.style.width = newRect.width + "px";
-              overlay.style.height = newRect.height + "px";
-          };
-
-          window.addEventListener("scroll", reposition);
-          window.addEventListener("resize", reposition);
-
-          // Cleanup listener if overlay removed
-          const observer = new MutationObserver(() => {
-              if (!document.body.contains(overlay)) {
-                  window.removeEventListener("scroll", reposition);
-                  window.removeEventListener("resize", reposition);
-                  observer.disconnect();
-              }
-          });
-          observer.observe(document.body, { childList: true });
-        }, 100);
-
-        
-    }
-    
+  ensureOverlayControlPanel();
 }

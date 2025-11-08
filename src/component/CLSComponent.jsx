@@ -61,7 +61,7 @@ const CLSComponent = () => {
 
                   clsTopEntriesData.map((entry) => {
                       return (
-                          <div className={styles.clsRowContainer} onClick={() => highlightCLSRect(entry.previousRect, entry.currentRect)}>
+                          <div className={styles.clsRowContainer} onClick={() => highlightCLSRect(entry.oldRect, entry.newRect)}>
                               <div className={styles.clsNodeSelectorText}>{entry.nodeSelector}</div>
                               <div className={styles.clsStartTimeText}>{entry.startTime.toFixed(3)}</div>
                               <div className={styles.clsValueText}>{entry.value.toFixed(3)}</div>
