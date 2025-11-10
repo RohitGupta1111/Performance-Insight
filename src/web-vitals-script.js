@@ -408,10 +408,19 @@ window._highlightCLSShiftRects = (previousRect, currentRect) => {
   };
 
   // Create both overlays
-  const oldOverlay = createOverlay(previousRect, "#ff0000", "Old (before)");
-  const newOverlay = createOverlay(currentRect, "#00ff00", "New (after)");
+  createOverlay(previousRect, "#ff0000", "Old (before)");
+  createOverlay(currentRect, "#00ff00", "New (after)");
 
   ensureOverlayControlPanel();
+
+  // Smooth scroll to center the new rect in view
+  if (currentRect) {
+    const targetY = currentRect.top + currentRect.scrollY - window.innerHeight / 2 + currentRect.height / 2;
+    window.scrollTo({
+      top: Math.max(targetY, 0),
+      behavior: "smooth"
+    });
+} 
 
 }
 

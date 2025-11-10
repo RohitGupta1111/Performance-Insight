@@ -29,13 +29,15 @@ const TTFBComponent = () => {
       decodedBodySize,
       responseStatus,
       type,
+      renderBlockingStatus,
+      startTime
     } = entry;
 
     const dns = domainLookupEnd - domainLookupStart;
     const connect = connectEnd - connectStart;
     const tls = secureConnectionStart > 0 ? connectEnd - secureConnectionStart : 0;
     const serverWait = responseStart - requestStart;
-    const ttfb = responseStart;
+    const ttfb = responseStart -  startTime;
     const serverProcessing = responseStart - connectEnd;
 
     return {
@@ -51,6 +53,7 @@ const TTFBComponent = () => {
       decodedBodySize,
       responseStatus,
       navigationType: type,
+      renderBlockingStatus
     };
   }, [webVitalsData?.TTFB]);
 

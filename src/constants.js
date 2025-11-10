@@ -53,5 +53,6 @@ export const debugFieldTooltips = {
     serverProcessing: "Time the server took to generate and begin sending the response.",
     protocol: "Network protocol used for this request (e.g., HTTP/2, HTTP/3).",
     navigationType: "How the page was loaded (navigate, reload, back/forward).",
+    renderBlockingStatus: "Indicates whether the resource was render-blocking during page load",
   },
 };
