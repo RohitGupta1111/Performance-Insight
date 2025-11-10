@@ -23,7 +23,7 @@ const CLSComponent = () => {
     }
   
     chrome.runtime.onMessage.addListener((message,sender,sendResponse) => {
-      console.log(message);
+      // console.log(message);
       if(message.type === "top-layout-shift-data") {
           setCLSTopEntriesData(message.data);
       }

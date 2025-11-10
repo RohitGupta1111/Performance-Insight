@@ -31,7 +31,7 @@ const LCPContainer = () => {
       })
     
       chrome.runtime.onMessage.addListener((message,sender,sendResponse) => {
-        console.log(message);
+        // console.log(message);
         if(message.type === "LCP_ENTRY") {
             setElementType(message.data.elementType);
         }

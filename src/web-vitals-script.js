@@ -19,7 +19,7 @@ const inpPO = new PerformanceObserver((list) => {
         entry.name === "touchend"
     )
     inpEventEntries.push(...filteredList);
-    console.log(...filteredList);
+    // console.log(...filteredList);
 });
 inpPO.observe({ type: 'event', buffered: true, durationThreshold: 16});
 inpPO.observe({type: 'first-input', buffered: true,});
@@ -28,7 +28,7 @@ inpPO.observe({type: 'first-input', buffered: true,});
 const clsPO = new PerformanceObserver((list) => {
     const filteredList = list.getEntries().filter((entry) => !entry.hadRecentInput)
     layoutShiftEntries.push(...filteredList);
-    console.log(...filteredList);
+    // console.log(...filteredList);
 });
 clsPO.observe({ type: 'layout-shift', buffered: true});
 
@@ -148,62 +148,114 @@ window._getTop5SourceRects = (entries) => {
   chrome.runtime.sendMessage({ type: "top-layout-shift-data", data: slicedSourcesWithNode});
 }
 
-function ensureOverlayControlPanel() {if (document.getElementById("web-vitals-overlay-panel")) return;
+function ensureOverlayControlPanel() {
+  // Prevent duplicate panels
+  if (document.getElementById("web-vitals-overlay-container")) return;
 
+  // Create container for the shadow root
+  const container = document.createElement("div");
+  container.id = "web-vitals-overlay-container";
+  container.style.zIndex = "2147483647"; // stay on top of everything
+  document.documentElement.appendChild(container);
+
+  // Attach shadow root (open so you can inspect in DevTools)
+  const shadow = container.attachShadow({ mode: "open" });
+
+  // Build the panel inside the shadow DOM
   const panel = document.createElement("div");
   panel.id = "web-vitals-overlay-panel";
   panel.innerHTML = `
-    <div id="wv-header">🔍 Web Vitals Overlay
-      <button id="wv-hide">Hide</button>
-      <button id="wv-clear">Clear</button>
+    <div id="wv-header">
+      🔍 Web Vitals Overlay
+      <div>
+        <button id="wv-hide">Hide</button>
+        <button id="wv-clear">Clear</button>
+      </div>
     </div>
   `;
-  panel.style.cssText = `
-    position: fixed;
-    top: 16px;
-    right: 16px;
-    background: rgba(30,30,30,0.92);
-    color: white;
-    padding: 10px 14px;
-    border-radius: 10px;
-    font-size: 14px;
-    cursor: move;
-    z-index: 2147483647;
+
+  // Scoped styles inside the shadow DOM
+  const style = document.createElement("style");
+  style.textContent = `
+    :host {
+      all: initial;
+      font-family: sans-serif;
+    }
+    #web-vitals-overlay-panel {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      background: rgba(30,30,30,0.92);
+      color: white;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      cursor: move;
+      z-index: 2147483647;
+      user-select: none;
+      width: fit-content;
+    }
+    #wv-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-weight: bold;
+    }
+    button {
+      all: unset;
+      background: #444;
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    button:hover {
+      background: #666;
+    }
   `;
 
-  document.body.appendChild(panel);
+  shadow.appendChild(style);
+  shadow.appendChild(panel);
 
-  // Drag support
-  const header = panel.querySelector("#wv-header");
+  // ===== Drag Support =====
+  const header = shadow.getElementById("wv-header");
   let offsetX = 0, offsetY = 0, isDragging = false;
 
   header.onmousedown = (e) => {
     isDragging = true;
-    offsetX = e.clientX - panel.offsetLeft;
-    offsetY = e.clientY - panel.offsetTop;
+    const rect = panel.getBoundingClientRect();
+    offsetX = e.clientX - rect.left;
+    offsetY = e.clientY - rect.top;
   };
 
   window.onmousemove = (e) => {
     if (isDragging) {
       panel.style.left = e.clientX - offsetX + "px";
       panel.style.top = e.clientY - offsetY + "px";
-      panel.style.right = "auto"; // so it stops snapping back
+      panel.style.right = "auto";
     }
   };
 
   window.onmouseup = () => (isDragging = false);
 
-  // Action buttons remain same
-  document.getElementById("wv-hide").onclick = () => {
+  // ===== Buttons =====
+  const hideBtn = shadow.getElementById("wv-hide");
+  const clearBtn = shadow.getElementById("wv-clear");
+
+  hideBtn.onclick = () => {
     document.querySelectorAll(".cls-highlight-overlay, #element-highlight-overlay")
       .forEach(o => o.style.display = o.style.display === "none" ? "block" : "none");
   };
 
-  document.getElementById("wv-clear").onclick = () => {
-    document.querySelectorAll(".cls-highlight-overlay, #element-highlight-overlay").forEach(o => o.remove());
-    panel.remove();
+  clearBtn.onclick = () => {
+    document.querySelectorAll(".cls-highlight-overlay, #element-highlight-overlay")
+      .forEach(o => o.remove());
+    container.remove(); // remove the whole container with shadow root
   };
 }
+
 
 
 function updateINPEntryFromPerformanceObserver (webVitalEntry)  {
@@ -291,7 +343,7 @@ function pruneLayoutShiftArray(currentCLSEntries, currentCLSValue) {
 window._getWebVitals = () => {
     const sendWebVitals = (metric) => {
         let updatedMetric = metric;
-        console.log("My extension" + JSON.stringify(metric));
+        // console.log("My extension" + JSON.stringify(metric));
         if(metric.entries.length >= 1) {
           if(metric.name === "INP") {
             setTimeout(() => {
@@ -345,7 +397,7 @@ window._getLCPEntryFromPerformanceObserver = () => {
         if (entry.entryType === 'largest-contentful-paint') {
             const elementType = getElementType(entry);
             lcpElement = entry.element;
-            console.log(entry.element);
+            // console.log(entry.element);
             chrome.runtime.sendMessage({
                 type: 'LCP_ENTRY',
                 data: {
@@ -359,13 +411,13 @@ window._getLCPEntryFromPerformanceObserver = () => {
 }
 
 window._highlightCLSShiftRects = (previousRect, currentRect) => {
-    console.log(
-  "CLS currentRect:", currentRect,
-  "Viewport size:", window.innerWidth, window.innerHeight,
-  "Scroll:", window.scrollX, window.scrollY,
-  "DevicePixelRatio:", window.devicePixelRatio,
-  "Body transform:", getComputedStyle(document.body).transform
-);
+//     console.log(
+//   "CLS currentRect:", currentRect,
+//   "Viewport size:", window.innerWidth, window.innerHeight,
+//   "Scroll:", window.scrollX, window.scrollY,
+//   "DevicePixelRatio:", window.devicePixelRatio,
+//   "Body transform:", getComputedStyle(document.body).transform
+// );
   // Remove any existing overlays
   document.querySelectorAll(".cls-highlight-overlay").forEach(el => el.remove());
 

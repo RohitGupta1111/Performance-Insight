@@ -14,6 +14,6 @@ export default defineConfig(({mode}) => ({
     },
     emptyOutDir: false,
     minify: mode === "production",
-    sourcemap: true
+    sourcemap: mode === "development"
   }
 }));

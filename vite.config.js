@@ -6,7 +6,7 @@ export default defineConfig(({mode}) => ({
   plugins: [react()],
   build: {
     minify: mode === "production",
-    sourcemap: true
+    sourcemap: mode === "development"
   },
   css: {
     modules: {
