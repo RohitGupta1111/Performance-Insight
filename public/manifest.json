@@ -17,7 +17,7 @@
       "run_at": "document_start"
     }
   ],
-  "permissions" : ["scripting","activeTab","storage","debugger","webNavigation"],
+  "permissions" : ["scripting","activeTab","storage","webNavigation"],
   "host_permissions": [
     "http://*/*",
     "https://*/*"
