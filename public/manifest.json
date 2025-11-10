@@ -3,7 +3,7 @@
   "name": "Web Vitals Analyzer",
   "version": "1.0.0",
   "description": "A basic example extension with only required keys",
-  "action" : {
+  "action": {
     "default_popup": "index.html"
   },
   "background": {
@@ -17,9 +17,6 @@
       "run_at": "document_start"
     }
   ],
-  "permissions" : ["scripting","activeTab","storage","webNavigation"],
-  "host_permissions": [
-    "http://*/*",
-    "https://*/*"
-  ]
+  "permissions": ["scripting", "activeTab", "storage", "webNavigation"],
+  "host_permissions": ["http://*/*", "https://*/*"]
 }

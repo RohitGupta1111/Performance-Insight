@@ -12,12 +12,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #1E293B;
-  color: #FFFFFF;
+  background-color: #1e293b;
+  color: #ffffff;
 }
 
 .nav-bar li.active {
-  background-color: #F8FAFC;
+  background-color: #f8fafc;
   color: black;
   font-weight: bold;
   border-bottom: none;
@@ -35,7 +35,7 @@
   cursor: pointer;
 }
 
-.nav-bar li{
+.nav-bar li {
   display: flex;
   border-bottom: 1px solid #334155;
   padding: 12px;
@@ -56,8 +56,8 @@
 .indicator {
   width: 0;
   height: 0;
-  border-left: 8px solid transparent;   /* half of the triangle base */
-  border-right: 8px solid transparent;  /* half of the triangle base */
+  border-left: 8px solid transparent; /* half of the triangle base */
+  border-right: 8px solid transparent; /* half of the triangle base */
   border-top: 16px solid #3498db;
   left: 0px;
   position: relative;

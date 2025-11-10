@@ -1,5 +1,5 @@
-import { createContext } from "react";
+import { createContext } from 'react'
 
-const WebVitalsContext = createContext({});
+const WebVitalsContext = createContext({})
 
-export default WebVitalsContext;
+export default WebVitalsContext

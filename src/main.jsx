@@ -9,5 +9,5 @@ createRoot(document.getElementById('root')).render(
     <WebVitalsState>
       <App />
     </WebVitalsState>
-  </StrictMode>,
+  </StrictMode>
 )
