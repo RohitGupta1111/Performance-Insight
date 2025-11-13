@@ -10,12 +10,14 @@ import WebVitalsContext from '../context/WebVitalsContext'
 import TTFBComponent from './TTFBComponent'
 import FCPComponent from './FCPComponent'
 import AuditControls from './AuditControls'
+import { fetchCRUXVisHistoricalData } from './api/CruxApi'
 
 function App() {
   const [selectedNavOption, setsSelectedNavOption] = useState(NAV_OPTIONS.MAIN)
   const { setWebVitalsData } = useContext(WebVitalsContext)
 
   useEffect(async () => {
+    await fetchCRUXVisHistoricalData();
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
     const tabId = tab?.id
     if (tabId) {
