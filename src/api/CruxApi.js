@@ -1,6 +1,6 @@
 import { HISTORY_API_METRICS } from "../constants";
 
-export const fetchCRUXVisHistoricalData = async () => {
+export const fetchCRUXVisHistoricalData = async (formfactor) => {
     const API_KEY = import.meta.env.VITE_CRUX_API_KEY;
     const apiUrl = `https://chromeuxreport.googleapis.com/v1/records:queryHistoryRecord?key=${API_KEY}`;
     const [tab] = await chrome.tabs.query({
@@ -10,7 +10,7 @@ export const fetchCRUXVisHistoricalData = async () => {
     const origin = new URL(tab.url).origin;
     const body = {
     origin: origin, // you can pass a site origin dynamically
-    formFactor: "DESKTOP",
+    formFactor: formfactor,
     metrics: [HISTORY_API_METRICS],
     collectionPeriodCount: 25
   };

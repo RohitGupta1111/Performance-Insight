@@ -5,8 +5,7 @@ import WebVitalsContext from '../context/WebVitalsContext';
 import styles from './P75DistributionChart.module.css';
 import { MONTH_NAMES } from '../constants';
 
-const P75distributionChart = ({ metric }) => {
-    const { historicalApiData } = useContext(WebVitalsContext);
+const P75distributionChart = ({ historicalApiData, metric }) => {
     const [p75Data, setP75Data] = useState([]);
 
     // format YYYY-MM-DD → readable

@@ -4,10 +4,11 @@ import { DEFAULT_VITALS_DATA } from '../enums'
 
 const WebVitalsState = (props) => {
   const [webVitalsData, setWebVitalsData] = useState(DEFAULT_VITALS_DATA)
-  const [historicalApiData, setHistoricalApiData] = useState([]);
+  const [desktopHistoricalApiData, setDesktopHistoricalApiData] = useState([]);
+  const [phoneHistoricalApiData, setPhoneHistoricalApiData] = useState([]);
 
   return (
-    <WebVitalsContext.Provider value={{ webVitalsData, setWebVitalsData, historicalApiData, setHistoricalApiData }}>
+    <WebVitalsContext.Provider value={{ webVitalsData, setWebVitalsData, desktopHistoricalApiData, setDesktopHistoricalApiData, phoneHistoricalApiData,setPhoneHistoricalApiData  }}>
       {props.children}
     </WebVitalsContext.Provider>
   )

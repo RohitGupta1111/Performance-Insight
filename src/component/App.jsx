@@ -15,7 +15,7 @@ import CruxvisComponent from './CruxvisComponent'
 
 function App() {
   const [selectedNavOption, setsSelectedNavOption] = useState(NAV_OPTIONS.MAIN)
-  const { setWebVitalsData, setHistoricalApiData } = useContext(WebVitalsContext)
+  const { setWebVitalsData, setDesktopHistoricalApiData, setPhoneHistoricalApiData } = useContext(WebVitalsContext)
 
   useEffect(async () => {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
@@ -27,8 +27,10 @@ function App() {
       })
       setWebVitalsData((webVitalsData) => ({ ...webVitalsData, ...vitals }))
     }
-    const historicalData = await fetchCRUXVisHistoricalData();
-    setHistoricalApiData(historicalData.record);
+    const desktopHistoricalData = await fetchCRUXVisHistoricalData("DESKTOP");
+    const phoneHistoricalData = await fetchCRUXVisHistoricalData("PHONE");
+    setDesktopHistoricalApiData(desktopHistoricalData.record);
+    setPhoneHistoricalApiData(phoneHistoricalData.record);
   }, [])
 
   const renderMainContent = () => {

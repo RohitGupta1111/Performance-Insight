@@ -13,8 +13,7 @@ import { processHistoricalApiDataForHistogram } from '../utils';
 import styles from './HistogramTimeseriesChart.module.css';
 import { MONTH_NAMES } from '../constants';
 
-const HistogramTimeseriesChart = ({ metric }) => {
-    const { historicalApiData } = useContext(WebVitalsContext);
+const HistogramTimeseriesChart = ({ historicalApiData, metric }) => {
     const [histData, setHistData] = useState([]);
 
     const formatDate = (d) => {
@@ -69,11 +68,13 @@ const HistogramTimeseriesChart = ({ metric }) => {
         return s;
     }, [uniqueMonths]);
 
-    const monthTickFormatter = (xIndex) => {
-        const point = histData[xIndex];
+    const monthTickFormatter = (value) => {
+        const index = Number(value);
+        const point = histData[index];
         if (!point) return "";
-        return visibleMonths.has(xIndex) ? point.monthLabel : "";
+        return visibleMonths.has(index) ? point.monthLabel : "";
     };
+
 
     useEffect(() => {
         if (historicalApiData) {
@@ -86,21 +87,25 @@ const HistogramTimeseriesChart = ({ metric }) => {
             <BarChart data={histData}>
 
                 {/* matching P75 structure: only minimal props */}
-                <Bar dataKey="good" stackId="a" fill="#6ac46a" />
-                <Bar dataKey="ni"   stackId="a" fill="#f4c542" />
-                <Bar dataKey="poor" stackId="a" fill="#e57373" />
+                <Bar dataKey="good" stackId="a" fill="#008000" />
+                <Bar dataKey="ni"   stackId="a" fill="#ffa500" />
+                <Bar dataKey="poor" stackId="a" fill="#ff0000" />
 
                 <XAxis
-                    dataKey="xIndex"
-                    type="number"
-                    domain={['dataMin', 'dataMax']}
-                    scale="linear"
+                    dataKey="xIndexStr"
+                    type="category"
                     tickFormatter={monthTickFormatter}
                     interval={0}
                     tickLine={false}
                 />
 
-                <YAxis tickLine={false} tickFormatter={(v) => `${Math.round(v * 100)}%`}/>
+
+                <YAxis
+                    domain={[0, 1]}
+                    ticks={[0, 0.2, 0.4, 0.6, 0.8, 1]}
+                    tickFormatter={v => `${v * 100}%`}
+                    tickLine={false}
+                />
 
                 <Tooltip content={<CustomTooltip />} cursor={false} />
             </BarChart>

@@ -74,16 +74,17 @@ export const processHistoricalApiDataForHistogram = (apiData, metric) => {
     let ni   = bin1.densities[i] ?? 0;
     let poor = bin2.densities[i] ?? 0;
 
-    // --- FIX: Normalize to keep sum <= 1 ---
+    // --- normalize ---
     const total = good + ni + poor;
     if (total > 0) {
       good = good / total;
-      ni   = ni   / total;
+      ni   = ni / total;
       poor = poor / total;
     }
 
     processed.push({
       xIndex: i,
+      xIndexStr: String(i),   // <-- NEW FIX
 
       firstDate: periods[i].firstDate,
       lastDate: periods[i].lastDate,
@@ -103,6 +104,7 @@ export const processHistoricalApiDataForHistogram = (apiData, metric) => {
 
   return processed;
 };
+
 
 
 

@@ -1,20 +1,28 @@
-/* --- GLOBAL TABS (zero gap, joined buttons) --- */
+/* --- HEADING --- */
+.heading {
+  text-align: start;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  margin-inline-start: 16px;
+}
 
-.tabsContainer {
+/* --- NEW: Row that contains both toggles --- */
+.rowToggleContainer {
   display: flex;
   justify-content: center;
+  gap: 20px;        /* space between the two toggle groups */
   margin-bottom: 16px;
+}
 
-  /* remove gap */
+/* --- GLOBAL TOGGLES (joined buttons) --- */
+.tabsContainer {
+  display: flex;
   gap: 0;
 
-  /* optional: create a joined group border */
   border: 1px solid #ddd;
   border-radius: 6px;
   overflow: hidden;
-  width: fit-content;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .tab {
@@ -27,13 +35,8 @@
   transition: background 0.15s ease, color 0.15s ease;
 }
 
-/* remove divider from last tab */
 .tab:last-child {
   border-right: none;
-}
-
-.tab:hover {
-  background: #e7e7e7;
 }
 
 .activeTab {
@@ -41,8 +44,7 @@
   color: white;
 }
 
-/* --- GRID + CARDS (same as your original) --- */
-
+/* --- GRID + CARDS --- */
 .gridContainer {
   display: grid;
   grid-template-columns: 1fr 1fr;
