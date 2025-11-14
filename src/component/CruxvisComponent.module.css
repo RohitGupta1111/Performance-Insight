@@ -1,0 +1,66 @@
+/* --- GLOBAL TABS (zero gap, joined buttons) --- */
+
+.tabsContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+
+  /* remove gap */
+  gap: 0;
+
+  /* optional: create a joined group border */
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  overflow: hidden;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tab {
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #f1f1f1;
+  border-right: 1px solid #ddd;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+/* remove divider from last tab */
+.tab:last-child {
+  border-right: none;
+}
+
+.tab:hover {
+  background: #e7e7e7;
+}
+
+.activeTab {
+  background: #007bff;
+  color: white;
+}
+
+/* --- GRID + CARDS (same as your original) --- */
+
+.gridContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 12px;
+}
+
+.chartCard {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  width: 250px;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  text-align: center;
+}

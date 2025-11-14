@@ -13,6 +13,8 @@ export const NAV_OPTIONS = {
   TTFB: 'TTFB',
   FCP: 'FCP',
   AUDIT: 'Audit',
+  CRUX: 'Crux'
+
 }
 
 export const VARIANT_LEVELS = {
@@ -50,3 +52,11 @@ export const DEFAULT_VITALS_DATA = {
   TTFB: { value: -1 },
   FCP: { value: -1 },
 }
+
+export const METRIC_TO_VARIANT_KEY = {
+  largest_contentful_paint: "LCP",
+  cumulative_layout_shift: "CLS",
+  first_contentful_paint: "FCP",
+  experimental_time_to_first_byte: "TTFB",
+  interaction_to_next_paint: "INP",
+};

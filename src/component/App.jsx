@@ -10,14 +10,14 @@ import WebVitalsContext from '../context/WebVitalsContext'
 import TTFBComponent from './TTFBComponent'
 import FCPComponent from './FCPComponent'
 import AuditControls from './AuditControls'
-import { fetchCRUXVisHistoricalData } from './api/CruxApi'
+import { fetchCRUXVisHistoricalData } from '../api/CruxApi'
+import CruxvisComponent from './CruxvisComponent'
 
 function App() {
   const [selectedNavOption, setsSelectedNavOption] = useState(NAV_OPTIONS.MAIN)
-  const { setWebVitalsData } = useContext(WebVitalsContext)
+  const { setWebVitalsData, setHistoricalApiData } = useContext(WebVitalsContext)
 
   useEffect(async () => {
-    await fetchCRUXVisHistoricalData();
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
     const tabId = tab?.id
     if (tabId) {
@@ -27,6 +27,8 @@ function App() {
       })
       setWebVitalsData((webVitalsData) => ({ ...webVitalsData, ...vitals }))
     }
+    const historicalData = await fetchCRUXVisHistoricalData();
+    setHistoricalApiData(historicalData.record);
   }, [])
 
   const renderMainContent = () => {
@@ -45,6 +47,8 @@ function App() {
         return <FCPComponent />
       case NAV_OPTIONS.AUDIT:
         return <AuditControls />
+      case NAV_OPTIONS.CRUX:
+        return <CruxvisComponent />
       default:
         return <DashboardComponent />
     }
@@ -102,6 +106,13 @@ function App() {
           >
             <span className="material-symbols-outlined">fact_check</span>
             <span className="nav-text">{NAV_OPTIONS.AUDIT}</span>
+          </li>
+          <li
+            className={selectedNavOption === NAV_OPTIONS.CRUX ? 'active' : ''}
+            onClick={(e) => setsSelectedNavOption(NAV_OPTIONS.CRUX)}
+          >
+            <span className="material-symbols-outlined">query_stats</span>
+            <span className="nav-text">{NAV_OPTIONS.CRUX}</span>
           </li>
         </ul>
       </nav>
