@@ -34,6 +34,8 @@ Each metric displays:
 - Injected using **content scripts** without modifying the page source.
 - Helps developers visually identify layout shifts, slow paint elements, and input delays.
 
+<img src="./docs/Screenshot_LCP_highlight.png" width="300" /> <img src="./docs/Screenshot_CLS_highlight.png" width="300" />
+
 ---
 
 ### 🛠 **Network & CPU Throttling (Chrome Debugger API)**
