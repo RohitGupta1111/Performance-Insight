@@ -22,6 +22,8 @@ Each metric displays:
 ✔ Threshold-based status (Good / Needs Improvement / Poor)  
 ✔ Web Vitals debug information
 
+<img src="./docs/Screenshot_Main.png" width="600" />
+
 ---
 
 ### 🎯 **Element Highlighting in the Page**
