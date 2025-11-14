@@ -1,35 +1,40 @@
 import { useContext, useEffect, useState } from 'react'
 import './App.css'
 import LinearIndicator from './LinearIndicator'
-import { DEFAULT_VITALS_DATA, NAV_OPTIONS } from '../enums';
-import DashboardComponent from './DashboardComponent';
-import LCPContainer from './LCPContainer';
-import INPContainer from './INPContainer';
-import CLSComponent from  './CLSComponent';
-import WebVitalsContext from '../context/WebVitalsContext';
-import TTFBComponent from './TTFBComponent';
-import FCPComponent from './FCPComponent';
-import AuditControls from './AuditControls';
+import { DEFAULT_VITALS_DATA, NAV_OPTIONS } from '../enums'
+import DashboardComponent from './DashboardComponent'
+import LCPContainer from './LCPContainer'
+import INPContainer from './INPContainer'
+import CLSComponent from './CLSComponent'
+import WebVitalsContext from '../context/WebVitalsContext'
+import TTFBComponent from './TTFBComponent'
+import FCPComponent from './FCPComponent'
+import AuditControls from './AuditControls'
+import { fetchCRUXVisHistoricalData } from '../api/CruxApi'
+import CruxvisComponent from './CruxvisComponent'
 
 function App() {
-  const [selectedNavOption, setsSelectedNavOption] = useState(NAV_OPTIONS.MAIN);
-  const {setWebVitalsData} = useContext(WebVitalsContext);
+  const [selectedNavOption, setsSelectedNavOption] = useState(NAV_OPTIONS.MAIN)
+  const { setWebVitalsData, setDesktopHistoricalApiData, setPhoneHistoricalApiData } = useContext(WebVitalsContext)
 
   useEffect(async () => {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    const tabId = tab?.id;
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
+    const tabId = tab?.id
     if (tabId) {
       const vitals = await chrome.runtime.sendMessage({
-        type: "get-tab-vitals",
-        tabId
-      });
-      setWebVitalsData((webVitalsData) => ({...webVitalsData, ...vitals}));
+        type: 'get-tab-vitals',
+        tabId,
+      })
+      setWebVitalsData((webVitalsData) => ({ ...webVitalsData, ...vitals }))
     }
-
-  },[]);
+    const desktopHistoricalData = await fetchCRUXVisHistoricalData("DESKTOP");
+    const phoneHistoricalData = await fetchCRUXVisHistoricalData("PHONE");
+    setDesktopHistoricalApiData(desktopHistoricalData.record);
+    setPhoneHistoricalApiData(phoneHistoricalData.record);
+  }, [])
 
   const renderMainContent = () => {
-    switch(selectedNavOption) {
+    switch (selectedNavOption) {
       case NAV_OPTIONS.MAIN:
         return <DashboardComponent handleVitalClick={setsSelectedNavOption} />
       case NAV_OPTIONS.LCP:
@@ -44,49 +49,76 @@ function App() {
         return <FCPComponent />
       case NAV_OPTIONS.AUDIT:
         return <AuditControls />
+      case NAV_OPTIONS.CRUX:
+        return <CruxvisComponent />
       default:
-        return <DashboardComponent/>
+        return <DashboardComponent />
     }
   }
 
   return (
-    <div className='app-container'>
-      <nav  className='nav-bar'>
-        <ul className=''>
-          <li className={ selectedNavOption === NAV_OPTIONS.MAIN ? 'active': ''} onClick={(e) => setsSelectedNavOption(NAV_OPTIONS.MAIN)}>
-              <span className="material-symbols-outlined">dashboard</span>
-              <span className='nav-text'>{NAV_OPTIONS.MAIN}</span>
+    <div className="app-container">
+      <nav className="nav-bar">
+        <ul className="">
+          <li
+            className={selectedNavOption === NAV_OPTIONS.MAIN ? 'active' : ''}
+            onClick={(e) => setsSelectedNavOption(NAV_OPTIONS.MAIN)}
+          >
+            <span className="material-symbols-outlined">dashboard</span>
+            <span className="nav-text">{NAV_OPTIONS.MAIN}</span>
           </li>
-          <li className={ selectedNavOption === NAV_OPTIONS.LCP ? 'active': ''} onClick={(e) => setsSelectedNavOption(NAV_OPTIONS.LCP)}>
-              <span className="material-symbols-outlined">image</span>
-              <span className='nav-text'>{NAV_OPTIONS.LCP}</span>
+          <li
+            className={selectedNavOption === NAV_OPTIONS.LCP ? 'active' : ''}
+            onClick={(e) => setsSelectedNavOption(NAV_OPTIONS.LCP)}
+          >
+            <span className="material-symbols-outlined">image</span>
+            <span className="nav-text">{NAV_OPTIONS.LCP}</span>
           </li>
-          <li className={ selectedNavOption === NAV_OPTIONS.INP ? 'active': ''} onClick={(e) => setsSelectedNavOption(NAV_OPTIONS.INP)}>
-              <span className="material-symbols-outlined">touch_app</span>
-              <span className='nav-text'>{NAV_OPTIONS.INP}</span>
+          <li
+            className={selectedNavOption === NAV_OPTIONS.INP ? 'active' : ''}
+            onClick={(e) => setsSelectedNavOption(NAV_OPTIONS.INP)}
+          >
+            <span className="material-symbols-outlined">touch_app</span>
+            <span className="nav-text">{NAV_OPTIONS.INP}</span>
           </li>
-          <li className={ selectedNavOption === NAV_OPTIONS.CLS ? 'active': ''} onClick={(e) => setsSelectedNavOption(NAV_OPTIONS.CLS)}>
-              <span className="material-symbols-outlined">flip</span>
-              <span className='nav-text'>{NAV_OPTIONS.CLS}</span>
+          <li
+            className={selectedNavOption === NAV_OPTIONS.CLS ? 'active' : ''}
+            onClick={(e) => setsSelectedNavOption(NAV_OPTIONS.CLS)}
+          >
+            <span className="material-symbols-outlined">flip</span>
+            <span className="nav-text">{NAV_OPTIONS.CLS}</span>
           </li>
-          <li className={ selectedNavOption === NAV_OPTIONS.TTFB ? 'active': ''} onClick={(e) => setsSelectedNavOption(NAV_OPTIONS.TTFB)}>
-              <span className="material-symbols-outlined">timer</span>
-              <span className='nav-text'>{NAV_OPTIONS.TTFB}</span>
+          <li
+            className={selectedNavOption === NAV_OPTIONS.TTFB ? 'active' : ''}
+            onClick={(e) => setsSelectedNavOption(NAV_OPTIONS.TTFB)}
+          >
+            <span className="material-symbols-outlined">timer</span>
+            <span className="nav-text">{NAV_OPTIONS.TTFB}</span>
           </li>
-          <li className={ selectedNavOption === NAV_OPTIONS.FCP ? 'active': ''} onClick={(e) => setsSelectedNavOption(NAV_OPTIONS.FCP)}>
-              <span className="material-symbols-outlined">format_paint</span>
-              <span className='nav-text'>{NAV_OPTIONS.FCP}</span>
+          <li
+            className={selectedNavOption === NAV_OPTIONS.FCP ? 'active' : ''}
+            onClick={(e) => setsSelectedNavOption(NAV_OPTIONS.FCP)}
+          >
+            <span className="material-symbols-outlined">format_paint</span>
+            <span className="nav-text">{NAV_OPTIONS.FCP}</span>
           </li>
-          <li className={ selectedNavOption === NAV_OPTIONS.AUDIT ? 'active': ''} onClick={(e) => setsSelectedNavOption(NAV_OPTIONS.AUDIT)}>
-              <span className="material-symbols-outlined">fact_check</span>
-              <span className='nav-text'>{NAV_OPTIONS.AUDIT}</span>
+          <li
+            className={selectedNavOption === NAV_OPTIONS.AUDIT ? 'active' : ''}
+            onClick={(e) => setsSelectedNavOption(NAV_OPTIONS.AUDIT)}
+          >
+            <span className="material-symbols-outlined">fact_check</span>
+            <span className="nav-text">{NAV_OPTIONS.AUDIT}</span>
+          </li>
+          <li
+            className={selectedNavOption === NAV_OPTIONS.CRUX ? 'active' : ''}
+            onClick={(e) => setsSelectedNavOption(NAV_OPTIONS.CRUX)}
+          >
+            <span className="material-symbols-outlined">query_stats</span>
+            <span className="nav-text">{NAV_OPTIONS.CRUX}</span>
           </li>
         </ul>
       </nav>
-      <main className='main-container'>
-        {renderMainContent()}
-      </main>
-      
+      <main className="main-container">{renderMainContent()}</main>
     </div>
   )
 }

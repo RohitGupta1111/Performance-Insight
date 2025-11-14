@@ -1,19 +1,19 @@
 import { defineConfig } from 'vite'
 
-export default defineConfig(({mode}) => ({
+export default defineConfig(({ mode }) => ({
   build: {
     lib: {
-      entry: "src/web-vitals-script.js",
-      name: "WebVitals",
-      fileName: () => "web-vital-bundle-script.js"
+      entry: 'src/web-vitals-script.js',
+      name: 'WebVitals',
+      fileName: () => 'web-vital-bundle-script.js',
     },
     rollupOptions: {
       output: {
-        format: "iife"
-      }
+        format: 'iife',
+      },
     },
     emptyOutDir: false,
-    minify: mode === "production",
-    sourcemap: true
-  }
-}));
+    minify: mode === 'production',
+    sourcemap: mode === 'development',
+  },
+}))

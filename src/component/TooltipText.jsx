@@ -1,10 +1,10 @@
-import styles from  "./ToolTipText.module.css";
+import styles from './ToolTipText.module.css'
 
-const TooltipText = ({children, tooltipText}) => {
+const TooltipText = ({ children, tooltipText }) => {
   return (
     <div className={styles.tooltip}>
-        {children}
-        <span className={styles.tooltipText}>{tooltipText}</span>
+      {children}
+      <span className={styles.tooltipText}>{tooltipText}</span>
     </div>
   )
 }

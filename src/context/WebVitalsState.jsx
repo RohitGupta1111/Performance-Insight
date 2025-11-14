@@ -1,16 +1,17 @@
-import { useState } from "react"
-import WebVitalsContext from "./WebVitalsContext";
-import { DEFAULT_VITALS_DATA } from "../enums";
+import { useState } from 'react'
+import WebVitalsContext from './WebVitalsContext'
+import { DEFAULT_VITALS_DATA } from '../enums'
 
 const WebVitalsState = (props) => {
-    
-    const [webVitalsData, setWebVitalsData] = useState(DEFAULT_VITALS_DATA);
-    
-    return (
-        <WebVitalsContext.Provider value={{webVitalsData, setWebVitalsData}}>
-            {props.children}
-        </WebVitalsContext.Provider>
-    )
+  const [webVitalsData, setWebVitalsData] = useState(DEFAULT_VITALS_DATA)
+  const [desktopHistoricalApiData, setDesktopHistoricalApiData] = useState([]);
+  const [phoneHistoricalApiData, setPhoneHistoricalApiData] = useState([]);
+
+  return (
+    <WebVitalsContext.Provider value={{ webVitalsData, setWebVitalsData, desktopHistoricalApiData, setDesktopHistoricalApiData, phoneHistoricalApiData,setPhoneHistoricalApiData  }}>
+      {props.children}
+    </WebVitalsContext.Provider>
+  )
 }
 
-export default WebVitalsState;
+export default WebVitalsState

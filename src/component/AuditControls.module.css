@@ -142,7 +142,9 @@
   border-radius: 8px;
   padding: 10px 12px;
   cursor: pointer;
-  transition: background 0.2s, box-shadow 0.2s;
+  transition:
+    background 0.2s,
+    box-shadow 0.2s;
 }
 
 .toolCard:hover {

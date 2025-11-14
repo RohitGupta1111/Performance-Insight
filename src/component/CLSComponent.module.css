@@ -1,69 +1,69 @@
 .inp-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .cls-top-container {
-    display: flex;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    justify-content: space-between;
-    align-items: center;
-    flex-direction: column;
-    width: 464px;
-    padding: 8px;
-    margin: 2px 8px 16px;
+  display: flex;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+  width: 464px;
+  padding: 8px;
+  margin: 2px 8px 16px;
 }
 
 .cls-row-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 436px;
-    border-bottom: 1px solid lightgray;
-    padding: 8px 0px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 436px;
+  border-bottom: 1px solid lightgray;
+  padding: 8px 0px;
 }
 
 .cls-topic-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 436px;
-    padding: 8px 0px 0px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 436px;
+  padding: 8px 0px 0px;
 }
 
 .cls-node-selector-text {
-    text-align: start;
-    width: 150px;
-    font-style: italic;
+  text-align: start;
+  width: 150px;
+  font-style: italic;
 }
 
 .cls-start-time-text {
-    text-align: center;
-    width: 100px;
+  text-align: center;
+  width: 100px;
 }
 
 .cls-value-text {
-    text-align: end;
-    width: 100px;
+  text-align: end;
+  width: 100px;
 }
 
 .section-topic {
-    font-size: small;
-    font-weight: bold;
-    margin-block-end: 0px;
-    margin-block-start: 24px;
-    text-align: start;
-    width: 484px;
+  font-size: small;
+  font-weight: bold;
+  margin-block-end: 0px;
+  margin-block-start: 24px;
+  text-align: start;
+  width: 484px;
 }
 
 .section-description {
-    font-size: smaller;
-    font-style: italic;
-    margin-block-end: 8px;
-    margin-block-start: 4px;
-    text-align: start;
-    width: 484px;
+  font-size: smaller;
+  font-style: italic;
+  margin-block-end: 8px;
+  margin-block-start: 4px;
+  text-align: start;
+  width: 484px;
 }
