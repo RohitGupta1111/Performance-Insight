@@ -22,7 +22,12 @@ Each metric displays:
 ✔ Threshold-based status (Good / Needs Improvement / Poor)  
 ✔ Web Vitals debug information
 
-<img src="./docs/Screenshot_Main.png" width="600" />
+<img src="./docs/Screenshot_Main.png" width="300" /> <img src="./docs/Screenshot_LCP_Screen.png" width="300" /> <img src="./docs/Screenshot_INP_Screen.png" width="300" />
+
+<img src="./docs/Screenshot_CLS_Screen.png" width="300" /> <img src="./docs/Screenshot_TTFB_Screen.png" width="300" /> <img src="./docs/Screenshot_FCP_Screen.png" width="300" />
+
+
+
 
 ---
 
@@ -49,7 +54,11 @@ Direct access buttons (opens in a new tab) for:
 - **Treo Site Performance Overview**
 - **CrUX Visualizer (CrUXVis)** – integration of 3-month historical data planned and listed on roadmap.
 
+  <img src="./docs/Screenshot_Audit_Screen.png" width="300" />
+
 ---
+
+
 
 ### 💡 **Intelligent Suggestions (Rule-based Engine)**
 
