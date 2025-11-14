@@ -66,3 +66,28 @@ export const debugFieldTooltips = {
       'Indicates whether the resource was render-blocking during page load',
   },
 }
+
+export const MONTH_NAMES = [
+  "Jan","Feb","Mar","Apr","May","Jun",
+  "Jul","Aug","Sep","Oct","Nov","Dec"
+];
+
+export const HISTORY_API_METRICS = [
+  "largest_contentful_paint",
+  "cumulative_layout_shift",
+  "interaction_to_next_paint",
+  "first_contentful_paint",
+  "experimental_time_to_first_byte",
+  "round_trip_time"
+];
+
+export const METRIC_LABELS = {
+  largest_contentful_paint: "Largest Contentful Paint",
+  cumulative_layout_shift: "Cumulative Layout Shift",
+  interaction_to_next_paint: "Interaction To Next Paint",
+  first_contentful_paint: "First Contentful Paint",
+  experimental_time_to_first_byte: "Time To First Byte",
+  round_trip_time: "Round Trip Time"
+};
+
+
