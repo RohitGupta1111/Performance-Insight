@@ -12,6 +12,7 @@ import FCPComponent from './FCPComponent'
 import AuditControls from './AuditControls'
 import { fetchCRUXVisHistoricalData } from '../api/CruxApi'
 import CruxvisComponent from './CruxvisComponent'
+import SuggestionsPanel from './SuggestionPanel'
 
 function App() {
   const [selectedNavOption, setsSelectedNavOption] = useState(NAV_OPTIONS.MAIN)
@@ -51,6 +52,8 @@ function App() {
         return <AuditControls />
       case NAV_OPTIONS.CRUX:
         return <CruxvisComponent />
+      case NAV_OPTIONS.INSIGHTS:
+        return <SuggestionsPanel />
       default:
         return <DashboardComponent />
     }
@@ -115,6 +118,13 @@ function App() {
           >
             <span className="material-symbols-outlined">query_stats</span>
             <span className="nav-text">{NAV_OPTIONS.CRUX}</span>
+          </li>
+          <li
+            className={selectedNavOption === NAV_OPTIONS.INSIGHTS ? 'active' : ''}
+            onClick={(e) => setsSelectedNavOption(NAV_OPTIONS.INSIGHTS)}
+          >
+            <span className="material-symbols-outlined">track_changes</span>
+            <span className="nav-text">{NAV_OPTIONS.INSIGHTS}</span>
           </li>
         </ul>
       </nav>

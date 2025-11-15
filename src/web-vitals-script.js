@@ -544,3 +544,145 @@ window._highlightElementByType = (type) => {
 
   ensureOverlayControlPanel()
 }
+
+// ======================================================
+// 🚀 DIAGNOSTICS COLLECTOR
+// ======================================================
+function collectDiagnostics() {
+  const diagnostics = {
+    lcpElement: null,
+    clsSources: [],
+    longTasks: [],
+    resourceEntries: [],
+    imagesMissingDimensions: [],
+    thirdPartyScripts: [],
+    blockingStyles: [],
+    blockingScripts: [],
+    preloaded: [],
+    ttfb: null,
+  };
+
+  /* ---------- LCP ELEMENT ---------- */
+  try {
+    const lcpEntry = performance.getEntriesByType("largest-contentful-paint").pop();
+    if (lcpEntry && lcpEntry.element) {
+      const el = lcpEntry.element;
+      const rect = el.getBoundingClientRect();
+      const resource = performance.getEntriesByType("resource")
+        .find(r => r.name === el.src || r.name === el.currentSrc);
+
+      diagnostics.lcpElement = {
+        tagName: el.tagName,
+        src: el.src || null,
+        selector: getElementPathString(el),
+        rect: {
+          x: rect.x, y: rect.y,
+          width: rect.width, height: rect.height
+        },
+        transferSize: resource?.transferSize ?? null,
+      };
+    }
+  } catch (e) {}
+
+  /* ---------- CLS SOURCES ---------- */
+  try {
+    diagnostics.clsSources = layoutShiftEntries.map(ls => {
+      const source = ls.sources?.[0];
+      return {
+        selector: source?.node ? getElementPathString(source.node) : null,
+        value: ls.value || 0,
+        previousRect: source?.previousRect || null,
+        currentRect: source?.currentRect || null,
+        nodeString: source?.node ? source.node.outerHTML?.substring(0, 200) : null,
+      };
+    });
+  } catch (e) {}
+
+  /* ---------- LONG TASKS ---------- */
+  try {
+    const longTasks = performance.getEntriesByType("longtask");
+    diagnostics.longTasks = longTasks.map(t => ({
+      duration: t.duration,
+      attribution: t.attribution || []
+    }));
+  } catch (e) {}
+
+  /* ---------- RESOURCE TIMINGS ---------- */
+  try {
+    diagnostics.resourceEntries = performance.getEntriesByType("resource").map(r => ({
+      name: r.name,
+      initiatorType: r.initiatorType,
+      transferSize: r.transferSize,
+      encodedBodySize: r.encodedBodySize,
+      startTime: r.startTime,
+      responseEnd: r.responseEnd,
+    }));
+  } catch (e) {}
+
+  /* ---------- MISSING IMAGE DIMENSIONS ---------- */
+  document.querySelectorAll("img").forEach(img => {
+    if (!img.width || !img.height) {
+      diagnostics.imagesMissingDimensions.push({
+        selector: getElementPathString(img),
+        src: img.src,
+        naturalWidth: img.naturalWidth,
+        naturalHeight: img.naturalHeight
+      });
+    }
+  });
+
+  /* ---------- BLOCKING CSS ---------- */
+  document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+    const resource = performance.getEntriesByType("resource").find(r => r.name === link.href);
+    diagnostics.blockingStyles.push({
+      href: link.href,
+      transferSize: resource?.transferSize
+    });
+  });
+
+  /* ---------- BLOCKING SCRIPTS ---------- */
+  document.querySelectorAll("script[src]").forEach(script => {
+    if (!script.async && !script.defer) {
+      const resource = performance.getEntriesByType("resource").find(r => r.name === script.src);
+      diagnostics.blockingScripts.push({
+        src: script.src,
+        transferSize: resource?.transferSize,
+        async: script.async,
+        defer: script.defer,
+      });
+    }
+  });
+
+  /* ---------- THIRD-PARTY SCRIPTS ---------- */
+  try {
+    const host = location.host;
+    diagnostics.thirdPartyScripts = diagnostics.resourceEntries.filter(
+      r => r.initiatorType === "script" && !r.name.includes(host)
+    );
+  } catch (e) {}
+
+  /* ---------- PRELOADED RESOURCES ---------- */
+  document.querySelectorAll('link[rel="preload"]').forEach(link => {
+    if (link.as === "image" || link.as === "script" || link.as === "style") {
+      diagnostics.preloaded.push(link.href);
+    }
+  });
+
+  /* ---------- TTFB ---------- */
+  try {
+    const nav = performance.getEntriesByType("navigation")[0];
+    if (nav) diagnostics.ttfb = nav.responseStart - nav.requestStart;
+  } catch (e) {}
+
+  return diagnostics;
+}
+
+
+window._getDiagnostics = ()  => {
+  const diagnostics = collectDiagnostics();
+  chrome.runtime.sendMessage({
+    type: 'diagnostics_data',
+    data: diagnostics,
+  })
+}
+
