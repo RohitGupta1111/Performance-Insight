@@ -22,9 +22,9 @@ Each metric displays:
 ✔ Threshold-based status (Good / Needs Improvement / Poor)  
 ✔ Web Vitals debug information
 
-<img src="./docs/Screenshot_Main.png" width="300" /> <img src="./docs/Screenshot_LCP_Screen.png" width="300" /> <img src="./docs/Screenshot_INP_Screen.png" width="300" />
-
-<img src="./docs/Screenshot_CLS_Screen.png" width="300" /> <img src="./docs/Screenshot_TTFB_Screen.png" width="300" /> <img src="./docs/Screenshot_FCP_Screen.png" width="300" />
+<img src="./docs/Screenshot_Main.png" width="400" /> <img src="./docs/Screenshot_LCP_Screen.png" width="400" /> 
+<img src="./docs/Screenshot_INP_Screen.png" width="400" /> <img src="./docs/Screenshot_CLS_Screen.png" width="400" />
+<img src="./docs/Screenshot_TTFB_Screen.png" width="400" /> <img src="./docs/Screenshot_FCP_Screen.png" width="400" />
 
 ---
 
@@ -34,7 +34,7 @@ Each metric displays:
 - Injected using **content scripts** without modifying the page source.
 - Helps developers visually identify layout shifts, slow paint elements, and input delays.
 
-<img src="./docs/Screenshot_LCP_highlight.png" width="300" /> <img src="./docs/Screenshot_CLS_highlight.png" width="300" />
+<img src="./docs/Screenshot_LCP_highlight.png" width="400" /> <img src="./docs/Screenshot_CLS_highlight.png" width="400" />
 
 ---
 
@@ -53,7 +53,7 @@ Direct access buttons (opens in a new tab) for:
 - **Treo Site Performance Overview**
 - **CrUX Visualizer (CrUXVis)**
 
-<img src="./docs/Screenshot_Audit_Screen.png" width="300" />
+<img src="./docs/Screenshot_Audit_Screen.png" width="500" />
 
 ---
 
@@ -75,7 +75,7 @@ The extension retrieves monthly performance trends for:
 ✔ Fetches 6 months of real-world field user performance  
 ✔ Trend charts built with **Recharts.js**  
 
-<img src="./docs/Screenshot_CRUX_p75.png" width="300" /> <img src="./docs/Screenshot_CRUX_histogram.png" width="300" />
+<img src="./docs/Screenshot_CRUX_p75.png" width="400" /> <img src="./docs/Screenshot_CRUX_histogram.png" width="400" />
 
 ---
 
@@ -89,7 +89,7 @@ Examples:
 - INP is high – long JavaScript tasks or heavy event handlers are delaying interaction; split tasks or move work to Web Workers.
 - TTFB is slow – the server response is delayed; consider caching, pre-rendering, or reducing server processing time.
 
-<img src="./docs/Screenshot_Suggestion_Screen.png" width="300" />
+<img src="./docs/Screenshot_Suggestion_Screen.png" width="500"/>
 
 ---
 
