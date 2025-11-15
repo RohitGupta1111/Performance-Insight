@@ -34,8 +34,8 @@ Each metric displays:
 - Injected using **content scripts** without modifying the page source.
 - Helps developers visually identify layout shifts, slow paint elements, and input delays.
 
-<img src="./docs/Screenshot_LCP_highlight.png" width="500" /> 
-<img src="./docs/Screenshot_CLS_highlight.png" width="500" />
+<img src="./docs/Screenshot_LCP_highlight.png" width="700" /> 
+<img src="./docs/Screenshot_CLS_highlight.png" width="700" />
 
 ---
 
