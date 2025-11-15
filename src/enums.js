@@ -13,7 +13,8 @@ export const NAV_OPTIONS = {
   TTFB: 'TTFB',
   FCP: 'FCP',
   AUDIT: 'Audit',
-  CRUX: 'Crux'
+  CRUX: 'Crux',
+  INSIGHTS: 'Insights'
 
 }
 

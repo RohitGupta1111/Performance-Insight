@@ -84,17 +84,19 @@ The extension retrieves monthly performance trends for:
 Based on real-time Web Vitals values, the extension generates practical recommendations.  
 Examples:
 
-- “LCP exceeds 4s – optimize hero image or reduce render-blocking CSS.”  
-- “CLS > 0.1 – consider reserving space for images/ads to prevent layout shift.”  
-- “INP is high – reduce heavy JavaScript on input event listeners.”
+- LCP is high – the hero image is large or missing dimensions; compress it, serve WebP/AVIF, and preload critical media.
+- CLS detected – elements are shifting; reserve space for images, ads, or dynamically injected components.
+- INP is high – long JavaScript tasks or heavy event handlers are delaying interaction; split tasks or move work to Web Workers.
+- TTFB is slow – the server response is delayed; consider caching, pre-rendering, or reducing server processing time.
+
+<img src="./docs/Screenshot_Suggestion_Screen.png" width="300" />
 
 ---
 
 ## 📊 Upcoming (Roadmap)
 
 ✔ **In Development**
-
-- Trend chart enhancements & comparative overlays  
+ 
 - Data export as **JSON / CSV**  
 - AI-powered insights using OpenAI API (future upgrade)
 
@@ -106,7 +108,7 @@ Examples:
 | ---------------- | ---------------------------------------------------- |
 | Framework        | React + Vite (Chrome Extension MV3)                  |
 | Performance APIs | Web Vitals, PerformanceObserver, Chrome Debugger API |
-| UI & Charts      | React, Tailwind (if added), Recharts (used for CrUX) |
+| UI & Charts      | React, Recharts (used for CrUX) |
 | External APIs    | PageSpeed Insights, Treo, CrUX History (6-month field data) |
 | Communication    | chrome.runtime messaging + content scripts           |
 | Debugging        | DOM overlays, injected styles, throttling simulation |
