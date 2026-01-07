@@ -28,10 +28,20 @@ function App() {
       })
       setWebVitalsData((webVitalsData) => ({ ...webVitalsData, ...vitals }))
     }
-    const desktopHistoricalData = await fetchCRUXVisHistoricalData("DESKTOP");
-    const phoneHistoricalData = await fetchCRUXVisHistoricalData("PHONE");
-    setDesktopHistoricalApiData(desktopHistoricalData.record);
-    setPhoneHistoricalApiData(phoneHistoricalData.record);
+    try {
+      const desktopHistoricalData = await fetchCRUXVisHistoricalData("DESKTOP");
+      setDesktopHistoricalApiData(desktopHistoricalData.record);
+    } catch (e) {
+      setDesktopHistoricalApiData([]);
+    }
+
+    try {
+      const phoneHistoricalData = await fetchCRUXVisHistoricalData("PHONE");
+      setPhoneHistoricalApiData(phoneHistoricalData.record);
+    } catch (e) {
+      setPhoneHistoricalApiData([])
+    }
+    
   }, [])
 
   const renderMainContent = () => {
@@ -106,13 +116,6 @@ function App() {
             <span className="nav-text">{NAV_OPTIONS.FCP}</span>
           </li>
           <li
-            className={selectedNavOption === NAV_OPTIONS.AUDIT ? 'active' : ''}
-            onClick={(e) => setsSelectedNavOption(NAV_OPTIONS.AUDIT)}
-          >
-            <span className="material-symbols-outlined">fact_check</span>
-            <span className="nav-text">{NAV_OPTIONS.AUDIT}</span>
-          </li>
-          <li
             className={selectedNavOption === NAV_OPTIONS.CRUX ? 'active' : ''}
             onClick={(e) => setsSelectedNavOption(NAV_OPTIONS.CRUX)}
           >
@@ -120,12 +123,19 @@ function App() {
             <span className="nav-text">{NAV_OPTIONS.CRUX}</span>
           </li>
           <li
+            className={selectedNavOption === NAV_OPTIONS.AUDIT ? 'active' : ''}
+            onClick={(e) => setsSelectedNavOption(NAV_OPTIONS.AUDIT)}
+          >
+            <span className="material-symbols-outlined">fact_check</span>
+            <span className="nav-text">{NAV_OPTIONS.AUDIT}</span>
+          </li>
+          {/* <li
             className={selectedNavOption === NAV_OPTIONS.INSIGHTS ? 'active' : ''}
             onClick={(e) => setsSelectedNavOption(NAV_OPTIONS.INSIGHTS)}
           >
             <span className="material-symbols-outlined">track_changes</span>
             <span className="nav-text">{NAV_OPTIONS.INSIGHTS}</span>
-          </li>
+          </li> */}
         </ul>
       </nav>
       <main className="main-container">{renderMainContent()}</main>

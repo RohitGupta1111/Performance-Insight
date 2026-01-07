@@ -65,7 +65,9 @@ const P75distributionChart = ({ historicalApiData, metric }) => {
     };
 
     useEffect(() => {
-        setP75Data(processHistoricalApiDataForP75Linechart(historicalApiData, metric));
+        if(historicalApiData && historicalApiData.collectionPeriods.length > 0) {
+            setP75Data(processHistoricalApiDataForP75Linechart(historicalApiData, metric));
+        }   
     }, [historicalApiData, metric]);
 
     return (

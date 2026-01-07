@@ -77,7 +77,7 @@ const HistogramTimeseriesChart = ({ historicalApiData, metric }) => {
 
 
     useEffect(() => {
-        if (historicalApiData) {
+        if (historicalApiData && historicalApiData.collectionPeriods.length > 0) {
             setHistData(processHistoricalApiDataForHistogram(historicalApiData, metric));
         }
     }, [historicalApiData, metric]);
